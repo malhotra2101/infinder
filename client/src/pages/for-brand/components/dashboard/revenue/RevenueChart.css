@@ -1,0 +1,114 @@
+/* RevenueChart Component - AMANATION-Inspired Theme */
+
+/* Theme variables are imported globally */
+
+.modern-analytics-card {
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 6px 32px 0 rgba(35,35,96,0.10);
+  border: 1.5px solid #F0F0F8;
+  padding: 40px 40px 0 40px;
+  margin: 0;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.mac-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.mac-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #232360;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  letter-spacing: -0.5px;
+}
+.mac-legend {
+  display: flex;
+  align-items: center;
+  font-size: 1.08rem;
+  gap: 8px;
+  color: #232360;
+  font-weight: 600;
+}
+.mac-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 7px;
+}
+.mac-svg {
+  width: 100%;
+  height: 320px;
+  background: #fff;
+  border-radius: 16px;
+  overflow: visible;
+  margin-bottom: 0;
+  display: block;
+}
+.mac-svg line {
+  stroke: #E6E6F0;
+  stroke-width: 1.5;
+}
+.mac-svg text {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+.mac-tooltip {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px 0 rgba(35,35,96,0.16);
+  padding: 14px 22px 12px 22px;
+  min-width: 110px;
+  text-align: left;
+  pointer-events: none;
+  font-family: 'Inter', sans-serif;
+  border: 1.5px solid #F0F0F8;
+}
+.mac-tooltip-date {
+  color: #A0A0B0;
+  font-size: 14px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.mac-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+.mac-tooltip-label {
+  color: #232360;
+  font-size: 15px;
+  font-weight: 600;
+  margin-right: 4px;
+}
+.mac-tooltip-value {
+  color: #232360;
+  font-size: 17px;
+  font-weight: 700;
+}
+@media (max-width: 700px) {
+  .modern-analytics-card {
+    padding: 14px 4px 8px 4px;
+  }
+  .mac-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .mac-title {
+    font-size: 1.1rem;
+  }
+  .mac-svg {
+    height: 200px;
+  }
+} 

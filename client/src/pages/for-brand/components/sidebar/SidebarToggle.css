@@ -1,0 +1,188 @@
+/* Sidebar Toggle Button - Advanced Animated Design */
+
+.sidebar-toggle {
+  position: fixed;
+  top: 60px;
+  left: 220px;
+  z-index: 1002;
+  background: #111;
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: white;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.sidebar-toggle:hover {
+  background: #ff9800;
+  transform: scale(1.05);
+  box-shadow: 0 8px 40px rgba(33, 33, 33, 0.18);
+}
+
+.sidebar-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Button rotation animation */
+.sidebar-toggle {
+  transform: rotate(0deg);
+}
+
+.sidebar-toggle.expanded {
+  left: 220px;
+  transform: rotate(90deg);
+}
+
+.sidebar-toggle:not(.expanded) {
+  left: 60px;
+  transform: rotate(0deg);
+}
+
+/* Toggle container */
+.toggle-container {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Line base styles */
+.line {
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background-color: white;
+  border-radius: 1px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+/* Line positions for burger state */
+.line-1 {
+  transform: translateY(-6px);
+}
+
+.line-2 {
+  transform: translateY(0);
+}
+
+.line-3 {
+  transform: translateY(6px);
+}
+
+/* Expanded state animations */
+.sidebar-toggle.expanded .line-1 {
+  transform: translateY(0) rotate(45deg);
+}
+
+.sidebar-toggle.expanded .line-2 {
+  transform: translateY(0) scaleX(0);
+  opacity: 0;
+}
+
+.sidebar-toggle.expanded .line-3 {
+  transform: translateY(0) rotate(-45deg);
+}
+
+/* Hover effects for lines */
+.sidebar-toggle:hover .line {
+  background-color: #f8fafc;
+}
+
+/* Focus styles for accessibility */
+.sidebar-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.3), 0 2px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    width: 36px;
+    height: 36px;
+    top: 60px;
+  }
+  
+  .sidebar-toggle.expanded {
+    left: 220px;
+  }
+  
+  .sidebar-toggle:not(.expanded) {
+    left: 60px;
+  }
+  
+  .toggle-container {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .line {
+    width: 18px;
+    height: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-toggle {
+    width: 32px;
+    height: 32px;
+    top: 60px;
+  }
+  
+  .sidebar-toggle.expanded {
+    left: 220px;
+  }
+  
+  .sidebar-toggle:not(.expanded) {
+    left: 60px;
+  }
+  
+  .toggle-container {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .line {
+    width: 16px;
+    height: 2px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .sidebar-toggle {
+    background: #111;
+    border: 2px solid #ffffff;
+  }
+  
+  .sidebar-toggle:hover {
+    background: #ff9800;
+  }
+  
+  .line {
+    background-color: #ffffff;
+    height: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-toggle,
+  .line {
+    transition: none;
+  }
+  
+  .sidebar-toggle:hover {
+    transform: none;
+  }
+} 
