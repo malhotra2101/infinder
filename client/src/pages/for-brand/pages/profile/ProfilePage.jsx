@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import NotificationButton from '../../components/notification/NotificationButton';
+import NotificationSidebar from '../../components/notification/NotificationSidebar';
 import './ProfilePage.css';
 
 /**
@@ -191,7 +191,7 @@ const ProfilePage = () => {
 
       {/* Floating Notification Button */}
       <div className="profile-notification-button">
-        <NotificationButton 
+        <NotificationSidebar 
           count={3} 
           onClick={handleNotificationClick}
           className="profile-notification"

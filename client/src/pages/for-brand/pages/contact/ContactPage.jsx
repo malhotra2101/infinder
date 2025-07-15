@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 // Import components
 import Contact from '../../components/contact/Contact';
 import Footer from '../../components/footer/Footer';
-import NotificationButton from '../../components/notification/NotificationButton';
+import NotificationSidebar from '../../components/notification/NotificationSidebar';
 
 // Import styles
 import './ContactPage.css';
@@ -52,7 +52,7 @@ const ContactPage = ({
 
       {/* Floating Notification Button */}
       <div className="contact-notification-button">
-        <NotificationButton 
+        <NotificationSidebar 
           count={3} 
           onClick={handleNotificationClick}
           className="contact-notification"

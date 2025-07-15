@@ -9,7 +9,7 @@ import InfluencerPerformance from '../../components/dashboard/performance/Influe
 import CampaignAnalytics from '../../components/dashboard/analytics/CampaignAnalytics';
 import TopInfluencers from '../../components/dashboard/top-influencers/TopInfluencers';
 import InfluencersTable from '../../components/dashboard/table/InfluencersTable';
-import NotificationButton from '../../components/notification/NotificationButton';
+import NotificationSidebar from '../../components/notification/NotificationSidebar';
 
 /**
  * CRM Dashboard Component
@@ -146,7 +146,7 @@ const Dashboard = ({
 
         {/* Floating Notification Button */}
         <div className="dashboard-notification-button">
-          <NotificationButton 
+          <NotificationSidebar 
             count={5} 
             onClick={handleNotificationClick}
             className="dashboard-notification"
@@ -317,7 +317,7 @@ const Dashboard = ({
 
       {/* Floating Notification Button */}
       <div className="dashboard-notification-button">
-        <NotificationButton 
+        <NotificationSidebar 
           count={5} 
           onClick={handleNotificationClick}
           className="dashboard-notification"

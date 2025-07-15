@@ -6,7 +6,7 @@ import Header from './components/header/Header';
 import SearchBar from './components/search-bar/SearchBar';
 import FilterSidebar from './components/filter-sidebar/FilterSidebar';
 import InfluencerCard from './components/influencer-card/InfluencerCard';
-import NotificationButton from '../../components/notification/NotificationButton';
+import NotificationSidebar from '../../components/notification/NotificationSidebar';
 import './SearchPage.css';
 
 /**
@@ -295,7 +295,7 @@ const SearchPage = ({ sidebarOpen = false }) => {
     <div className={`search-page ${sidebarOpen ? 'search-page--sidebar-open' : ''}`}>
       {/* Independent Notification Button */}
       <div className="search-notification-button">
-        <NotificationButton 
+        <NotificationSidebar 
           count={3} 
           onClick={handleNotificationClick}
           className="search-notification"

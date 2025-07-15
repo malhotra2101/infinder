@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './CampaignsPage.css';
-import NotificationButton from '../../components/notification/NotificationButton';
+import NotificationSidebar from '../../components/notification/NotificationSidebar';
 
 /**
  * Campaigns Page Component
@@ -142,7 +142,7 @@ const CampaignsPage = () => {
       <div className="campaigns-page">
         {/* Floating Notification Button */}
         <div className="campaigns-notification-button">
-          <NotificationButton 
+          <NotificationSidebar 
             count={2} 
             onClick={handleNotificationClick}
             className="campaigns-notification"
@@ -225,7 +225,7 @@ const CampaignsPage = () => {
     <div className="campaigns-page">
       {/* Floating Notification Button */}
       <div className="campaigns-notification-button">
-        <NotificationButton 
+        <NotificationSidebar 
           count={2} 
           onClick={handleNotificationClick}
           className="campaigns-notification"
