@@ -1,16 +1,16 @@
 {
-  "name": "infinder-new-design",
+  "name": "infinder",
   "version": "1.0.0",
-  "description": "New design iteration for Infinder - Influencer Marketing Platform",
+  "description": "Infinder - Influencer Marketing Platform",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"pnpm --filter new-design-client dev\" \"pnpm --filter new-design-server dev\"",
-    "dev:client": "pnpm --filter new-design-client dev",
-    "dev:server": "pnpm --filter new-design-server dev",
-    "build": "pnpm --filter new-design-client build",
+    "dev": "concurrently \"pnpm --filter infinder-client dev\" \"pnpm --filter infinder-server dev\"",
+    "dev:client": "pnpm --filter infinder-client dev",
+    "dev:server": "pnpm --filter infinder-server dev",
+    "build": "pnpm --filter infinder-client build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["mern", "react", "express", "new-design", "influencer-marketing"],
+  "keywords": ["mern", "react", "express", "infinder", "influencer-marketing"],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.12.4",

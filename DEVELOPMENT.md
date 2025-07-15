@@ -6,7 +6,7 @@ This guide provides detailed information about the project architecture, coding 
 
 ### Monorepo Structure
 ```
-new-design/
+infinder/
 ├── client/          # React frontend (Port 3001)
 ├── server/          # Express backend (Port 5050)
 └── shared/          # Shared utilities (future)

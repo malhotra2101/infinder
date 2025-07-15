@@ -1,11 +1,11 @@
-# Infinder New Design
+# Infinder
 
-This is the new design iteration for the Infinder Influencer Marketing Platform. This project runs in isolation from the original design to allow for experimentation and comparison.
+A modern Influencer Marketing Platform built with React, Express.js, and Supabase.
 
 ## Project Structure
 
 ```
-new-design/
+infinder/
 ├── client/          # React frontend (port 3001)
 ├── server/          # Express backend (port 5051)
 ├── package.json     # Root workspace configuration
@@ -22,7 +22,7 @@ new-design/
 
 1. **Install dependencies:**
    ```bash
-   cd new-design
+   cd infinder
    pnpm install
    ```
 
@@ -43,19 +43,21 @@ new-design/
 
 ## Development
 
-This project is completely isolated from the original design:
-- Different ports to avoid conflicts
-- Separate package.json files
-- Independent development environment
-- Can run alongside the original design
+This project features:
+- Modern React with Vite
+- Express.js backend with API endpoints
+- Supabase integration for database
+- Hot module replacement for fast development
+- ESLint and Prettier configuration
 
 ## Features
 
-- Modern React with Vite
-- Express.js backend
-- Supabase integration
-- Hot module replacement
-- ESLint and Prettier configuration
+- **Frontend**: Modern React with Vite for fast development
+- **Backend**: Express.js with RESTful API endpoints
+- **Database**: Supabase integration for real-time data
+- **Authentication**: Secure user authentication system
+- **UI/UX**: Responsive design with modern components
+- **Development**: Hot module replacement and linting
 
 ## Commands
 

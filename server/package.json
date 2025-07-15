@@ -1,7 +1,7 @@
 {
-  "name": "new-design-server",
+  "name": "infinder-server",
   "version": "1.0.0",
-  "description": "Express.js backend server for New Design - Influencer Marketing Platform with Supabase integration",
+  "description": "Express.js backend server for Infinder - Influencer Marketing Platform with Supabase integration",
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development node index.js",
@@ -14,7 +14,7 @@
     "test-setup": "node src/config/testSetup.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["express", "api", "backend", "supabase", "new-design"],
+  "keywords": ["express", "api", "backend", "supabase", "infinder"],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.12.4",

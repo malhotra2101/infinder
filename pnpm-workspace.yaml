@@ -1,9 +1,9 @@
-# PNPM Workspace Configuration for New Design
-# This file defines the workspace structure for the new design iteration
+# PNPM Workspace Configuration for Infinder
+# This file defines the workspace structure for the Infinder platform
 # Each package listed here can be managed independently while sharing dependencies
 
 packages:
-  # React frontend application with Vite build tool (New Design)
+  # React frontend application with Vite build tool (Infinder)
   - client
-  # Express.js backend server with API endpoints (New Design)
+  # Express.js backend server with API endpoints (Infinder)
   - server 
