@@ -77,7 +77,6 @@
   justify-content: center;
   min-width: 44px;
   min-height: 44px;
-  gap: 0.5rem;
 }
 
 .notification-button:hover {
@@ -92,20 +91,10 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), -4px 0 12px rgba(0, 0, 0, 0.15);
 }
 
-.notification-button__icon {
-  width: 20px;
-  height: 20px;
-  transition: transform 0.2s ease;
-}
-
-.notification-button:hover .notification-button__icon {
-  transform: scale(1.1);
-}
-
 /* Arrow Icon */
 .notification-button__arrow {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: #64748b;
 }
