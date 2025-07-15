@@ -6,6 +6,7 @@ import './NotificationSidebar.css';
  * NotificationSidebar Component
  * 
  * A full-width sidebar that slides in from the right with blurred background overlay.
+ * Button is positioned at the rightmost edge and moves with the sidebar.
  * 
  * @param {Object} props - Component props
  * @param {number} props.count - Number of notifications to display in badge
@@ -64,36 +65,44 @@ const NotificationSidebar = ({
 
   return (
     <>
-      {/* Notification Button */}
-      <div className={`notification-button-container ${className}`} ref={buttonRef}>
-        <button 
-          className="notification-button"
-          onClick={handleButtonClick}
-          aria-label="Notifications"
-          title="Notifications"
-          aria-expanded={isSidebarOpen}
-        >
-          <svg className="notification-button__icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-          </svg>
-          {count > 0 && (
-            <span className="notification-button__badge">
-              {count > 99 ? '99+' : count}
-            </span>
-          )}
-        </button>
-      </div>
-
       {/* Backdrop Overlay */}
       {isSidebarOpen && (
         <div className="notification-backdrop" onClick={handleCloseSidebar} />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar Container */}
       <div 
         className={`notification-sidebar ${isSidebarOpen ? 'notification-sidebar--open' : ''}`}
         ref={sidebarRef}
       >
+        {/* Notification Button - Fixed to sidebar */}
+        <div className={`notification-button-container ${className}`} ref={buttonRef}>
+          <button 
+            className="notification-button"
+            onClick={handleButtonClick}
+            aria-label="Notifications"
+            title="Notifications"
+            aria-expanded={isSidebarOpen}
+          >
+            <svg className="notification-button__icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+            {count > 0 && (
+              <span className="notification-button__badge">
+                {count > 99 ? '99+' : count}
+              </span>
+            )}
+            {/* Arrow Icon */}
+            <svg 
+              className={`notification-button__arrow ${isSidebarOpen ? 'notification-button__arrow--open' : ''}`} 
+              viewBox="0 0 24 24" 
+              fill="currentColor"
+            >
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+          </button>
+        </div>
+
         <div className="notification-sidebar__header">
           <h2>Notifications</h2>
           <button 
