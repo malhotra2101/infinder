@@ -1,5 +1,5 @@
 /* Global Styles */
-@import './pages/for-brand/theme.css';
+@import './shared/layouts/theme.css';
 
 * {
   margin: 0;
@@ -38,7 +38,8 @@ body.menu-open .new-section,
 body.menu-open .features,
 body.menu-open .about,
 body.menu-open .contact,
-body.menu-open .footer {
+body.menu-open .footer,
+body.menu-open .three-d-carousel-module {
   max-width: calc(100vw - 480px);
   margin-right: 480px;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -71,6 +72,11 @@ body.menu-open .contact {
 }
 
 body.menu-open .footer {
+  width: calc(100vw - 480px);
+  margin-right: 480px;
+}
+
+body.menu-open .three-d-carousel-module {
   width: calc(100vw - 480px);
   margin-right: 480px;
 }
@@ -111,7 +117,8 @@ body.menu-open .footer-content {
   body.menu-open .features,
   body.menu-open .about,
   body.menu-open .contact,
-  body.menu-open .footer {
+  body.menu-open .footer,
+  body.menu-open .three-d-carousel-module {
     max-width: calc(100vw - 380px);
     margin-right: 380px;
   }
@@ -121,7 +128,8 @@ body.menu-open .footer-content {
   body.menu-open .features,
   body.menu-open .about,
   body.menu-open .contact,
-  body.menu-open .footer {
+  body.menu-open .footer,
+  body.menu-open .three-d-carousel-module {
     width: calc(100vw - 380px);
     margin-right: 380px;
   }
@@ -146,7 +154,8 @@ body.menu-open .footer-content {
   body.menu-open .features,
   body.menu-open .about,
   body.menu-open .contact,
-  body.menu-open .footer {
+  body.menu-open .footer,
+  body.menu-open .three-d-carousel-module {
     max-width: 100vw;
     margin-right: 0;
     padding-right: 20px;
@@ -157,7 +166,8 @@ body.menu-open .footer-content {
   body.menu-open .features,
   body.menu-open .about,
   body.menu-open .contact,
-  body.menu-open .footer {
+  body.menu-open .footer,
+  body.menu-open .three-d-carousel-module {
     width: 100vw;
     margin-right: 0;
   }
@@ -188,6 +198,57 @@ body.menu-open .footer-content {
   overflow: hidden;
   position: relative;
   z-index: 10; /* Above cube when it's behind */
+}
+
+
+
+/* Ensure all child scenes also have black background */
+.three-d-carousel-module .scene {
+  background-color: #000000 !important;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+}
+
+/* 3D Carousel Wrapper */
+.three-d-carousel-wrapper {
+  position: relative;
+  z-index: 10; /* Same z-index as brand carousel */
+  background-color: #0f0e0e;
+  color: #fff;
+  font-family: 'forma-djr-mono', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-top: 0;
+}
+
+/* Eliminate gaps around the carousel module */
+.brand-carousel + .three-d-carousel-module,
+.three-d-carousel-module + * {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Ensure the carousel module covers the full area without gaps */
+.three-d-carousel-module {
+  position: relative;
+  z-index: 10;
+  background-color: #000000 !important;
+  color: #fff;
+  font-family: 'forma-djr-mono', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  left: 0;
+  right: 0;
 }
 
 .carousel-container {
@@ -824,6 +885,10 @@ body.menu-open .footer-content {
     font-size: 1rem;
     padding: 0 30px;
   }
+  
+  .three-d-carousel-wrapper {
+    min-height: 90vh;
+  }
 }
 
 @media (max-width: 480px) {
@@ -926,6 +991,10 @@ body.menu-open .footer-content {
     font-size: 0.9rem;
     padding: 0 20px;
   }
+  
+  .three-d-carousel-wrapper {
+    padding-top: 0;
+  }
 } 
 
 /* App Layout Styles for Search Page and Other Pages */
@@ -964,6 +1033,7 @@ body.menu-open .footer-content {
   padding-left: 240px; /* Default padding for expanded sidebar */
   transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin: 0;
+  position: relative;
 }
 
 .main-content.sidebar-open {
@@ -1011,7 +1081,7 @@ body.menu-open .footer-content {
 /* Responsive design for mobile */
 @media (max-width: 768px) {
   .main-content {
-    padding-left: 0; /* Remove sidebar padding on mobile */
+    padding-left: 0; /* Remove sidebar padding on mobile - sidebar overlays */
     width: 100%; /* Full width on mobile */
   }
   
@@ -1042,4 +1112,16 @@ body.menu-open .footer-content {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+} 
+
+/* Add these visibility classes */
+.visible {
+  display: block;
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+
+.hidden {
+  display: none;
+  opacity: 0;
 } 

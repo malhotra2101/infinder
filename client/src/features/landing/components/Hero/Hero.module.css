@@ -1,0 +1,372 @@
+.hero {
+  min-height: 100vh;
+  width: 100vw;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  user-select: none; /* Disable text selection on the entire hero section */
+  -webkit-user-select: none; /* Safari support */
+  -moz-user-select: none; /* Firefox support */
+  -ms-user-select: none; /* IE/Edge support */
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+}
+
+/* Menu-responsive adjustments for Hero */
+body.menu-open .hero {
+  width: calc(100vw - 480px);
+  margin-right: 480px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (max-width: 1200px) {
+  body.menu-open .hero {
+    width: calc(100vw - 380px);
+    margin-right: 380px;
+  }
+}
+
+@media (max-width: 768px) {
+  body.menu-open .hero {
+    width: 100vw;
+    margin-right: 0;
+  }
+}
+
+.menuButton {
+  position: fixed;
+  top: 3rem;
+  right: 4rem;
+  z-index: 1000;
+  background: linear-gradient(90deg, #111 0%, #111 100%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  color: #fff;
+  border: 2.5px solid #111;
+  border-radius: 999px;
+  padding: 1rem 3.2rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background-position 0.5s cubic-bezier(0.77,0,0.18,1), background 0.5s cubic-bezier(0.77,0,0.18,1), border 0.5s cubic-bezier(0.77,0,0.18,1);
+  outline: none;
+  user-select: none; /* Disable text selection on menu button */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.menuButton:hover {
+  background: linear-gradient(90deg, #ff9800 0%, #ff9800 100%);
+  background-size: 200% 100%;
+  background-position: 0 0;
+  color: #fff;
+  border: 3px solid #111;
+  box-shadow: 0 8px 40px rgba(33,33,33,0.18);
+}
+
+.title {
+  position: fixed;
+  top: 2vw;
+  left: 2vw;
+  font-size: 9vw;
+  font-weight: 600;
+  color: #111;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+  z-index: 10000; /* Increased z-index to stay above 3D carousel */
+  font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none; /* Already present, but keeping for consistency */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Menu-responsive adjustments for title */
+body.menu-open .title {
+  left: calc(2vw + 480px);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (max-width: 1200px) {
+  body.menu-open .title {
+    left: calc(2vw + 380px);
+  }
+}
+
+@media (max-width: 768px) {
+  body.menu-open .title {
+    left: 2vw;
+  }
+}
+
+
+
+/* Cube Container - positioned in the center */
+.cubeContainer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  background: #fff; /* Explicit white background to override any black background */
+  border-radius: 8px; /* Optional: adds rounded corners to the background */
+  padding: 20px; /* Optional: adds some padding around the cube */
+}
+
+/* Menu-responsive adjustments for cube container */
+body.menu-open .cubeContainer {
+  margin-left: -240px; /* Adjust position when menu is open */
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (max-width: 1200px) {
+  body.menu-open .cubeContainer {
+    margin-left: -190px;
+  }
+}
+
+@media (max-width: 768px) {
+  body.menu-open .cubeContainer {
+    margin-left: 0; /* Reset to center on mobile when menu is open */
+  }
+}
+
+/* Reload Button Container - positioned in original location */
+.reloadButtonContainer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin-left: -500px; /* Position much further to the left of the cube */
+  z-index: 1001;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Menu-responsive adjustments for reload button */
+body.menu-open .reloadButtonContainer {
+  margin-left: -260px; /* Adjust position when menu is open */
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (max-width: 1200px) {
+  body.menu-open .reloadButtonContainer {
+    margin-left: -210px;
+  }
+}
+
+@media (max-width: 768px) {
+  body.menu-open .reloadButtonContainer {
+    margin-left: -500px;
+  }
+}
+
+/* Get Started Button Container - positioned lower */
+.getStartedButtonContainer {
+  position: absolute;
+  left: 50%;
+  top: 85%; /* Position even lower in the hero section */
+  transform: translate(-50%, -50%);
+  margin-left: -500px; /* Position much further to the left of the cube */
+  z-index: 1001;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Menu-responsive adjustments for get started button */
+body.menu-open .getStartedButtonContainer {
+  margin-left: -260px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (max-width: 1200px) {
+  body.menu-open .getStartedButtonContainer {
+    margin-left: -210px;
+  }
+}
+
+@media (max-width: 768px) {
+  body.menu-open .getStartedButtonContainer {
+    margin-left: -500px;
+  }
+}
+
+/* Try Demo Button Container - positioned at same distance from top as get started button */
+.tryDemoButtonContainer {
+  position: absolute;
+  left: 50%;
+  top: 85%; /* Same distance from top as get started button */
+  transform: translate(-50%, -50%);
+  margin-left: 425px; /* Position to align with view more button */
+  z-index: 1001;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+
+/* Menu-responsive adjustments for try demo button */
+body.menu-open .tryDemoButtonContainer {
+  margin-left: 185px; /* Adjust position when menu is open */
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (max-width: 1200px) {
+  body.menu-open .tryDemoButtonContainer {
+    margin-left: 235px;
+  }
+}
+
+@media (max-width: 768px) {
+  body.menu-open .tryDemoButtonContainer {
+    margin-left: 425px;
+  }
+}
+
+
+
+
+
+/* Try Demo Button */
+.tryDemoButton {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+  min-width: 180px;
+  justify-content: center;
+  transform: translateZ(0);
+}
+
+
+
+.tryDemoButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.08) 0%, 
+    rgba(255, 255, 255, 0.04) 50%, 
+    transparent 100%);
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.tryDemoButton:hover::before {
+  opacity: 1;
+}
+
+.tryDemoButton:hover {
+  background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 50%, #2d2d2d 100%);
+  transform: scale(1.03) translateZ(0);
+  box-shadow: 
+    0 25px 70px rgba(0, 0, 0, 0.5),
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tryDemoButton:active {
+  transform: scale(0.98) translateZ(0);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .title {
+    font-size: 12vw;
+    top: 4vw;
+    left: 0vw;
+  }
+  .menuButton {
+    top: 1.2rem;
+    right: 1.2rem;
+    padding: 0.7rem 1.7rem;
+    font-size: 1rem;
+  }
+  .leftButtonsContainer {
+    margin-left: -400px;
+  }
+}
+@media (max-width: 600px) {
+  .title {
+    font-size: 15vw;
+    top: 6vw;
+    left: 0vw;
+  }
+  .menuButton {
+    top: 0.7rem;
+    right: 0.7rem;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.95rem;
+  }
+  .leftButtonsContainer {
+    margin-left: -300px;
+  }
+} 

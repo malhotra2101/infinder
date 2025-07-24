@@ -29,15 +29,8 @@ const configureMiddleware = (app) => {
     }
   }));
 
-  // CORS configuration
-  app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['https://yourdomain.com'] 
-      : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-  }));
+  // CORS configuration is handled in security middleware
+  // No need to configure it here as it's already applied via applySecurityMiddleware
 
   // Rate limiting - disabled for development
   if (process.env.NODE_ENV === 'production') {

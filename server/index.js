@@ -2,44 +2,46 @@
 require('dotenv').config();
 
 /**
- * New Design Server Entry Point
+ * Server Entry Point
  *
  * Main server startup file that initializes the Express application
- * and starts the HTTP server for the new design iteration.
+ * and starts the HTTP server.
  */
 
 const { createApp } = require('./src/app');
-const { initializeSupabase } = require('./src/config/database');
+const { initializeSupabase } = require('./src/config/supabase');
+const config = require('./src/config/environment');
 
 /**
  * Start the server
  * @param {number} port - Port number to listen on
  * @returns {Promise<void>}
  */
-const startServer = async (port = 5052) => {
+const startServer = async (port = config.port) => {
   try {
     // Initialize database connection
-    // TODO: Add database connection validation
     const supabase = initializeSupabase();
     
-    if (process.env.NODE_ENV === 'development') {
-      console.log('✅ New Design Database connection initialized');
+    if (config.nodeEnv === 'development') {
+      console.log('✅ Database connection initialized');
     }
 
-    // Create Express application
-    const app = createApp();
+    // Create Express application with WebSocket support
+    const { app, server, wss } = createApp();
 
-    // Start HTTP server
-    app.listen(port, () => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`🚀 New Design Infinder Server running on port ${port}`);
+    // Start HTTP server with WebSocket support
+    server.listen(port, () => {
+      if (config.nodeEnv === 'development') {
+        console.log(`🚀 Infinder Server running on port ${port}`);
+        console.log(`🔌 WebSocket server ready on ws://localhost:${port}/ws`);
+        console.log(`📡 SSE endpoint available at http://localhost:${port}/api/events`);
         console.log(`📊 API Health Check: http://localhost:${port}/api/ping`);
-        console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`🌐 Environment: ${config.nodeEnv}`);
         console.log(`📝 API Documentation: http://localhost:${port}/api/info`);
       }
     });
   } catch (error) {
-    console.error('❌ Failed to start new design server:', error);
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 };
@@ -48,7 +50,7 @@ const startServer = async (port = 5052) => {
  * Handle graceful shutdown
  */
 const handleGracefulShutdown = (signal) => {
-  if (process.env.NODE_ENV === 'development') {
+  if (config.nodeEnv === 'development') {
     console.log(`🛑 ${signal} received, shutting down gracefully`);
   }
   process.exit(0);
@@ -60,8 +62,7 @@ process.on('SIGINT', () => handleGracefulShutdown('SIGINT'));
 
 // Start server if this file is run directly
 if (require.main === module) {
-  const PORT = process.env.PORT || 5052;
-  startServer(PORT);
+  startServer();
 }
 
 module.exports = { startServer }; 

@@ -14,7 +14,11 @@ const {
   getInfluencersByListType,
   getListCounts,
   removeFromList,
-  resetLists
+  removeFromCampaigns,
+  resetLists,
+  getInfluencerCampaigns,
+  sendCollaborationRequest,
+  updateInfluencerListStatus
 } = require('../controllers/influencerController');
 
 const router = express.Router();
@@ -69,10 +73,38 @@ router.get('/lists/:type', getInfluencersByListType);
 router.post('/lists/remove', removeFromList);
 
 /**
+ * @route   POST /api/influencers/lists/remove-campaigns
+ * @desc    Remove influencer from multiple campaigns
+ * @access  Public
+ */
+router.post('/lists/remove-campaigns', removeFromCampaigns);
+
+/**
  * @route   POST /api/influencers/lists/reset
  * @desc    Reset all influencer lists (clear selected and rejected)
  * @access  Public
  */
 router.post('/lists/reset', resetLists);
+
+/**
+ * @route   GET /api/influencers/:influencerId/campaigns
+ * @desc    Get campaigns for a specific influencer from influencer_lists
+ * @access  Public
+ */
+router.get('/:influencerId/campaigns', getInfluencerCampaigns);
+
+/**
+ * @route   POST /api/influencers/send-request
+ * @desc    Send collaboration request from influencer to brand
+ * @access  Public
+ */
+router.post('/send-request', sendCollaborationRequest);
+
+/**
+ * @route   PUT /api/influencers/lists/:id/status
+ * @desc    Update influencer list status and handle automatic removal for rejected status
+ * @access  Public
+ */
+router.put('/lists/:id/status', updateInfluencerListStatus);
 
 module.exports = router; 

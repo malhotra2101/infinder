@@ -1,14 +1,9 @@
-/**
- * Error Handling Utilities
- * 
- * Centralized error handling functions for consistent error responses
- * and logging across the application.
- */
+const config = require('../config/environment');
 
 /**
  * Custom error class for API errors
  */
-class APIError extends Error {
+class ApiError extends Error {
   constructor(message, statusCode = 500, isOperational = true) {
     super(message);
     this.statusCode = statusCode;
@@ -26,50 +21,51 @@ class APIError extends Error {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next function
  */
-const handleError = (error, req, res, next) => {
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  
-  // Log error details
-  console.error('Error occurred:', {
-    message: error.message,
-    stack: error.stack,
-    url: req.url,
-    method: req.method,
+const errorHandler = (error, req, res, next) => {
+  let { statusCode = 500, message } = error;
+
+  // Log error
+  if (config.nodeEnv === 'development') {
+    console.error('Error:', {
+      message: error.message,
+      stack: error.stack,
+      url: req.url,
+      method: req.method,
+      timestamp: new Date().toISOString()
+    });
+  } else {
+    console.error('Error:', {
+      message: error.message,
+      url: req.url,
+      method: req.method,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  // Handle specific error types
+  if (error.name === 'ValidationError') {
+    statusCode = 400;
+    message = 'Validation Error';
+  } else if (error.name === 'CastError') {
+    statusCode = 400;
+    message = 'Invalid ID format';
+  } else if (error.code === 11000) {
+    statusCode = 409;
+    message = 'Duplicate field value';
+  }
+
+  // Send error response
+  res.status(statusCode).json({
+    success: false,
+    message: message || 'Internal server error',
+    ...(config.nodeEnv === 'development' && { stack: error.stack }),
     timestamp: new Date().toISOString()
   });
-  
-  // Determine status code
-  const statusCode = error.statusCode || 500;
-  
-  // Create error response
-  const errorResponse = {
-    error: true,
-    message: error.message || 'Internal server error',
-    statusCode,
-    timestamp: new Date().toISOString()
-  };
-  
-  // Add stack trace in development
-  if (isDevelopment && error.stack) {
-    errorResponse.stack = error.stack;
-  }
-  
-  res.status(statusCode).json(errorResponse);
-};
-
-/**
- * Create a 404 error handler
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-const handleNotFound = (req, res) => {
-  const error = new APIError(`Route ${req.method} ${req.path} not found`, 404);
-  handleError(error, req, res);
 };
 
 /**
  * Async error wrapper for route handlers
- * @param {Function} fn - Async route handler function
+ * @param {Function} fn - Async function to wrap
  * @returns {Function} Wrapped function with error handling
  */
 const asyncHandler = (fn) => {
@@ -79,48 +75,29 @@ const asyncHandler = (fn) => {
 };
 
 /**
- * Validate required fields in request body
- * @param {Array} requiredFields - Array of required field names
- * @returns {Function} Validation middleware function
- */
-const validateRequiredFields = (requiredFields) => {
-  return (req, res, next) => {
-    const missingFields = requiredFields.filter(field => !req.body[field]);
-    
-    if (missingFields.length > 0) {
-      const error = new APIError(
-        `Missing required fields: ${missingFields.join(', ')}`,
-        400
-      );
-      return next(error);
-    }
-    
-    next();
-  };
-};
-
-/**
- * Create success response wrapper
- * @param {Object} data - Response data
- * @param {string} message - Success message
+ * Create a standardized success response
+ * @param {Object} res - Express response object
  * @param {number} statusCode - HTTP status code
- * @returns {Object} Standardized success response
+ * @param {string} message - Success message
+ * @param {*} data - Response data
  */
-const createSuccessResponse = (data, message = 'Success', statusCode = 200) => {
-  return {
+const successResponse = (res, statusCode = 200, message = 'Success', data = null) => {
+  const response = {
     success: true,
     message,
-    data,
-    statusCode,
     timestamp: new Date().toISOString()
   };
+
+  if (data !== null) {
+    response.data = data;
+  }
+
+  res.status(statusCode).json(response);
 };
 
 module.exports = {
-  APIError,
-  handleError,
-  handleNotFound,
+  ApiError,
+  errorHandler,
   asyncHandler,
-  validateRequiredFields,
-  createSuccessResponse
+  successResponse
 }; 

@@ -61,6 +61,15 @@ export default defineConfig({
     host: true,
   },
 
+  // Resolve configuration for better module resolution
+  resolve: {
+    alias: {
+      '@': '/src',
+      '@shared': '/src/shared',
+      '@features': '/src/features'
+    }
+  },
+
   // Optimize dependencies for faster startup and HMR
   optimizeDeps: {
     include: [

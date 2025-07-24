@@ -1,0 +1,330 @@
+/* ThreeDCarousel Component Styles */
+
+/* CSS Variables */
+:root {
+  --color-text: #fff;
+  --color-bg: #000000;
+  --color-link: #ffffff;
+  --color-link-hover: rgba(255, 255, 255, 0.6);
+  --border-radius: 4px;
+  --aspect: 4/5;
+  --grid-item-height: 20vh;
+  --c-gap: 3rem;
+  --r-gap: 3rem;
+  --column: 80px;
+  --column-count: 3;
+}
+
+/* Scene Container */
+.scene {
+  perspective: 900px;
+  position: relative;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent !important; /* Remove black background */
+  color: var(--color-text);
+  font-family: 'forma-djr-mono', sans-serif;
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scene Title */
+.scene__title {
+  position: relative;
+  z-index: 10;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.scene__title a {
+  display: block;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: color 0.3s ease;
+}
+
+.scene__title a:hover {
+  color: var(--color-link-hover);
+}
+
+.scene__title span {
+  display: inline-block;
+}
+
+/* Carousel Container */
+.carousel {
+  width: 400px;
+  height: 500px;
+  top: 50%;
+  left: 50%;
+  margin: -250px 0 0 -200px;
+  position: absolute;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform: translateZ(-550px) rotateY(0deg);
+}
+
+/* Carousel Cells */
+.carousel__cell {
+  position: absolute;
+  width: 350px;
+  height: 420px;
+  left: 0;
+  top: 0;
+  transform-style: preserve-3d;
+}
+
+/* Cards */
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  cursor: default;
+}
+
+.card__face {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  background-image: var(--img);
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card__face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
+.card__face--back {
+  transform: rotateY(180deg);
+}
+
+/* Preview Modal */
+.preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0 15vw;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  grid-row-gap: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  background-color: #000000 !important;
+  z-index: 1000;
+  visibility: hidden;
+}
+
+.preview__header {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: space-between;
+  line-height: 1;
+}
+
+.preview__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.preview__close {
+  background: none;
+  text-transform: inherit;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  color: var(--color-text);
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.preview__close:hover,
+.preview__close:focus {
+  outline: none;
+  color: var(--color-link-hover);
+}
+
+/* Grid */
+.grid {
+  padding: 1rem 0;
+  display: grid;
+  grid-template-columns: repeat(var(--column-count), minmax(var(--column), 1fr));
+  grid-column-gap: var(--c-gap);
+  grid-row-gap: var(--r-gap);
+  width: 100%;
+  perspective: 900px;
+}
+
+.grid__item {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  will-change: transform, clip-path;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.grid__item-image {
+  width: 100%;
+  aspect-ratio: var(--aspect);
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.15s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.grid__item:hover .grid__item-image {
+  opacity: 0.7;
+}
+
+.grid__item-caption h3 {
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .carousel {
+    width: 300px;
+    height: 375px;
+    margin: -187.5px 0 0 -150px;
+  }
+  
+  .carousel__cell {
+    width: 262.5px;
+    height: 315px;
+  }
+  
+  .scene__title {
+    font-size: 1.25rem;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    max-width: 90vw;
+    text-align: center;
+  }
+
+  .preview {
+    padding: 0 5vw;
+  }
+
+  .preview__title {
+    font-size: 1.25rem;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    max-width: 90vw;
+    text-align: center;
+  }
+
+  .grid {
+    --column-count: 2;
+    --c-gap: 2rem;
+    --r-gap: 2rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .carousel {
+    width: 250px;
+    height: 312.5px;
+    margin: -156.25px 0 0 -125px;
+  }
+  
+  .carousel__cell {
+    width: 218.75px;
+    height: 262.5px;
+  }
+  
+  .scene__title {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    max-width: 90vw;
+    text-align: center;
+  }
+
+  .preview__title {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    max-width: 90vw;
+    text-align: center;
+  }
+
+  .grid {
+    --column-count: 1;
+    --c-gap: 1rem;
+    --r-gap: 1rem;
+  }
+}
+
+@media screen and (min-width: 65em) {
+  .grid {
+    --column-count: 6;
+  }
+}
+
+/* Animation Classes */
+.scene--loading {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.scene--loaded {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Custom scrollbar for webkit browsers */
+.scene::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scene::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.scene::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.scene::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+} 
