@@ -3,15 +3,10 @@ require('dotenv').config();
 
 const config = {
   // Server configuration
-  port: process.env.PORT || 5052,
+  port: process.env.PORT || 5051,
   nodeEnv: process.env.NODE_ENV || 'development',
   
-  // Supabase configuration
-  supabase: {
-    url: process.env.SUPABASE_URL,
-    anonKey: process.env.SUPABASE_ANON_KEY,
-    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY
-  },
+  // Database configuration will be added for new database design
   
   // CORS configuration
   cors: {
@@ -37,18 +32,6 @@ const config = {
   }
 };
 
-// Validate required environment variables
-const requiredEnvVars = [
-  'SUPABASE_URL',
-  'SUPABASE_ANON_KEY'
-];
-
-const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-
-if (missingVars.length > 0) {
-  console.error('❌ Missing required environment variables:', missingVars);
-  console.error('Please check your .env file');
-  process.exit(1);
-}
+// Environment validation will be updated for new database design
 
 module.exports = config; 

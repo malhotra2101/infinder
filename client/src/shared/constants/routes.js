@@ -10,6 +10,7 @@ export const ROUTES = {
   HOME: '/dashboard',
   CAMPAIGNS: '/campaigns',
   SEARCH: '/search',
+  EMAIL_COMPOSER: '/email-composer',
   COLLABORATION: '/collaboration',
   CONTACT: '/contact',
   PROFILE: '/profile',

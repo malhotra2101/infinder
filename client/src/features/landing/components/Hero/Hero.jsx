@@ -26,22 +26,11 @@ const Hero = memo(({ isScrollAnimationVisible = false }) => {
    * Handle reload button click
    */
   const handleReloadClick = useCallback(() => {
-    if (isReloading) {
-      return;
-    }
-
-    setIsReloading(true);
-
-    // Reload the cube
+    // Reload the cube immediately; no timeout, no disabled state
     if (cubeRef.current) {
       cubeRef.current.reload();
     }
-
-    // Simple reload animation
-    setTimeout(() => {
-      setIsReloading(false);
-    }, 1000);
-  }, [isReloading]);
+  }, []);
 
   /**
    * Handle cube face change
@@ -56,7 +45,7 @@ const Hero = memo(({ isScrollAnimationVisible = false }) => {
    * Handle get started button click
    */
   const handleGetStartedClick = useCallback(() => {
-    // TODO: Implement get started functionality - could navigate to signup or show a modal
+    // Navigate to signup page for new users
     window.location.href = '/signup';
   }, []);
 
@@ -64,7 +53,7 @@ const Hero = memo(({ isScrollAnimationVisible = false }) => {
    * Handle try demo button click
    */
   const handleTryDemoClick = useCallback(() => {
-    // TODO: Implement try demo functionality - could open a demo modal or navigate to demo page
+    // Navigate to login page with demo credentials available
     // For now, just show an alert
     window.showToast('Demo functionality coming soon! This would typically open a demo interface or guided tour.', 'info');
   }, []);
@@ -142,7 +131,7 @@ const Hero = memo(({ isScrollAnimationVisible = false }) => {
             fontSize: `${9 - (6.5 * titleTransformProgress)}vw`,
             top: `${2 - (0.5 * titleTransformProgress)}rem`,
             left: `${2 - (0.5 * titleTransformProgress)}rem`,
-            zIndex: 10000, // Always keep high z-index to stay above 3D carousel
+            zIndex: 8, // Keeps above 3D carousel
             transform: 'translateZ(0)', // Force hardware acceleration
             color: titleTransformProgress >= 0.8 ? '#ffffff' : '#111',
             transition: 'color 0.6s cubic-bezier(0.77,0,0.18,1)'
@@ -151,13 +140,13 @@ const Hero = memo(({ isScrollAnimationVisible = false }) => {
           INFINDER
         </h1>
 
-        {/* Cube - positioned in the center */}
-        <div className={styles.cubeContainer}>
-          <Cube 
-            ref={cubeRef}
-            onFaceChange={handleCubeFaceChange}
-          />
-        </div>
+        {/* Cube - positioned where the previous cube was */}
+        <Cube 
+          ref={cubeRef}
+          onFaceChange={handleCubeFaceChange}
+          className={styles.cubeContainer}
+          style={{ top: '50%', zIndex: 9 }}
+        />
 
         {/* Reload Button - positioned in original location */}
         <div className={styles.reloadButtonContainer}>

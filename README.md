@@ -1,6 +1,6 @@
 # Infinder
 
-A modern Influencer Marketing Platform built with React, Express.js, and Supabase.
+A modern Influencer Marketing Platform built with React, Express.js, and a custom database.
 
 ## Project Structure
 
@@ -14,7 +14,7 @@ infinder/
 
 ## Ports Used
 
-- **Frontend**: `http://localhost:3001`
+- **Frontend**: `http://localhost:3004`
 - **Backend**: `http://localhost:5051`
 - **Preview**: `http://localhost:4001`
 
@@ -33,7 +33,7 @@ infinder/
 
 3. **Start only client:**
    ```bash
-   pnpm dev:client
+   pnpm dev:client # Vite runs on port 3004
    ```
 
 4. **Start only server:**
@@ -46,7 +46,7 @@ infinder/
 This project features:
 - Modern React with Vite
 - Express.js backend with API endpoints
-- Supabase integration for database
+- Custom database integration
 - Hot module replacement for fast development
 - ESLint and Prettier configuration
 
@@ -54,7 +54,7 @@ This project features:
 
 - **Frontend**: Modern React with Vite for fast development
 - **Backend**: Express.js with RESTful API endpoints
-- **Database**: Supabase integration for real-time data
+- **Database**: Custom database design for optimal performance
 - **Authentication**: Secure user authentication system
 - **UI/UX**: Responsive design with modern components
 - **Development**: Hot module replacement and linting

@@ -2,50 +2,96 @@
  * Authentication Service
  * 
  * Handles user authentication operations including login, signup,
- * and session management. Currently uses mock data for demonstration.
- * 
- * TODO: Integrate with Supabase Auth when backend is ready
+ * and session management with backend API integration.
  */
 
-// Mock user data for demonstration
-const MOCK_USERS = [
-  {
-    id: '1',
-    email: 'demo@example.com',
-    password: 'password123',
-    firstName: 'Demo',
-    lastName: 'User',
-    role: 'user'
-  }
-];
+import { API_CONFIG } from '../config/config.js';
+
+const API_BASE_URL = `${API_CONFIG.BASE_URL}/api`;
 
 /**
- * Mock authentication service
+ * Authentication service with backend integration
  */
 class AuthService {
   constructor() {
     this.currentUser = null;
     this.isAuthenticated = false;
     this.token = localStorage.getItem('auth_token');
+    this.refreshTokenTimer = null;
     
     // Check if user is already logged in
     if (this.token) {
-      this.currentUser = this.getUserFromToken(this.token);
-      this.isAuthenticated = !!this.currentUser;
+      // Also try to get cached user data
+      const cachedUser = localStorage.getItem('auth_user');
+      if (cachedUser) {
+        try {
+          this.currentUser = JSON.parse(cachedUser);
+          this.isAuthenticated = true;
+        } catch (error) {
+          console.error('Error parsing cached user data:', error);
+          localStorage.removeItem('auth_user');
+        }
+      }
+      this.initializeFromToken();
     }
   }
 
   /**
-   * Get user from token (mock implementation)
-   * @param {string} token - Authentication token
-   * @returns {Object|null} User object or null
+   * Initialize user from stored token
    */
-  getUserFromToken(token) {
+  async initializeFromToken() {
     try {
-      // In a real app, this would decode a JWT token
-      const userData = JSON.parse(atob(token.split('.')[1]));
-      return MOCK_USERS.find(user => user.id === userData.userId) || null;
+      // First validate the stored session
+      if (!this.validateStoredSession()) {
+        return;
+      }
+
+      // If we have cached user data and session is valid, use it immediately
+      if (this.currentUser && this.isAuthenticated) {
+        this.setupTokenRefresh();
+        console.log('✅ Restored authentication from cache');
+        return;
+      }
+
+      // Otherwise, verify with API
+      const user = await this.getCurrentUserFromAPI();
+      if (user) {
+        this.currentUser = user;
+        this.isAuthenticated = true;
+        this.setupTokenRefresh();
+        console.log('✅ Authentication verified with server');
+      } else {
+        this.logout(); // Clear invalid token
+      }
     } catch (error) {
+      console.error('Token initialization error:', error);
+      this.logout(); // Clear invalid token
+    }
+  }
+
+  /**
+   * Get current user from API
+   * @returns {Promise<Object|null>} User object or null
+   */
+  async getCurrentUserFromAPI() {
+    try {
+      if (!this.token) return null;
+      
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${this.token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get user profile');
+      }
+
+      const result = await response.json();
+      return result.success ? result.user : null;
+    } catch (error) {
+      console.error('Get current user error:', error);
       return null;
     }
   }
@@ -59,44 +105,41 @@ class AuthService {
    */
   async login(credentials) {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+      });
 
-      const { email, password } = credentials;
-      
-      // Find user in mock data
-      const user = MOCK_USERS.find(u => 
-        u.email.toLowerCase() === email.toLowerCase() && 
-        u.password === password
-      );
+      const result = await response.json();
 
-      if (!user) {
-        throw new Error('Invalid email or password');
+      if (!response.ok || !result.success) {
+        return {
+          success: false,
+          message: result.message || 'Login failed'
+        };
       }
 
-      // Create mock token
-      const token = btoa(JSON.stringify({
-        userId: user.id,
-        email: user.email,
-        exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-      }));
-
-      // Store token and user data
-      localStorage.setItem('auth_token', token);
-      this.token = token;
-      this.currentUser = user;
+      // Store token and user data persistently
+      localStorage.setItem('auth_token', result.token);
+      localStorage.setItem('auth_user', JSON.stringify(result.user));
+      localStorage.setItem('auth_login_timestamp', Date.now().toString());
+      localStorage.setItem('auth_device_id', this.generateDeviceId());
+      this.token = result.token;
+      this.currentUser = result.user;
       this.isAuthenticated = true;
+      
+      // Set up token refresh (refresh token every 23 hours if auto-login is enabled)
+      this.setupTokenRefresh();
+      
+      console.log('✅ User logged in and session persisted for 7 days');
 
       return {
         success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role
-        },
-        token
+        user: result.user,
+        token: result.token
       };
     } catch (error) {
       throw error;
@@ -110,59 +153,44 @@ class AuthService {
    */
   async signup(userData) {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
 
-      const { email, password, firstName, lastName } = userData;
+      const result = await response.json();
 
-      // Check if user already exists
-      const existingUser = MOCK_USERS.find(u => 
-        u.email.toLowerCase() === email.toLowerCase()
-      );
-
-      if (existingUser) {
-        throw new Error('User with this email already exists');
+      if (!response.ok || !result.success) {
+        return {
+          success: false,
+          message: result.message || 'Signup failed'
+        };
       }
 
-      // Create new user
-      const newUser = {
-        id: String(MOCK_USERS.length + 1),
-        email,
-        password,
-        firstName,
-        lastName,
-        role: 'user',
-        createdAt: new Date().toISOString()
-      };
-
-      // Add to mock data (in real app, this would be saved to database)
-      MOCK_USERS.push(newUser);
-
-      // Create mock token
-      const token = btoa(JSON.stringify({
-        userId: newUser.id,
-        email: newUser.email,
-        exp: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-      }));
-
-      // Store token and user data
-      localStorage.setItem('auth_token', token);
-      this.token = token;
-      this.currentUser = newUser;
+      // Store token and user data persistently
+      localStorage.setItem('auth_token', result.token);
+      localStorage.setItem('auth_user', JSON.stringify(result.user));
+      localStorage.setItem('auth_login_timestamp', Date.now().toString());
+      localStorage.setItem('auth_device_id', this.generateDeviceId());
+      this.token = result.token;
+      this.currentUser = result.user;
       this.isAuthenticated = true;
+      
+      // Set up token refresh for signup as well
+      this.setupTokenRefresh();
+      
+      console.log('✅ User signed up and session persisted for 7 days');
 
       return {
         success: true,
-        user: {
-          id: newUser.id,
-          email: newUser.email,
-          firstName: newUser.firstName,
-          lastName: newUser.lastName,
-          role: newUser.role
-        },
-        token
+        user: result.user,
+        token: result.token
       };
     } catch (error) {
+      console.error('AuthService signup error:', error);
       throw error;
     }
   }
@@ -176,13 +204,24 @@ class AuthService {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Clear local storage
+      // Clear all auth-related local storage
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      localStorage.removeItem('auth_login_timestamp');
+      localStorage.removeItem('auth_device_id');
+      
+      // Clear token refresh timer
+      if (this.refreshTokenTimer) {
+        clearTimeout(this.refreshTokenTimer);
+        this.refreshTokenTimer = null;
+      }
       
       // Reset state
       this.token = null;
       this.currentUser = null;
       this.isAuthenticated = false;
+      
+      console.log('🔓 User logged out, session cleared');
 
       return { success: true };
     } catch (error) {
@@ -196,6 +235,18 @@ class AuthService {
    */
   getCurrentUser() {
     return this.currentUser;
+  }
+
+  /**
+   * Get current user from API (force refresh)
+   * @returns {Promise<Object|null>} Current user object
+   */
+  async refreshCurrentUser() {
+    const user = await this.getCurrentUserFromAPI();
+    if (user) {
+      this.currentUser = user;
+    }
+    return user;
   }
 
   /**
@@ -242,26 +293,32 @@ class AuthService {
   }
 
   /**
-   * Reset password (mock implementation)
+   * Reset password
    * @param {string} email - User email
    * @returns {Promise<Object>} Reset result
    */
   async resetPassword(email) {
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
 
-      const user = MOCK_USERS.find(u => 
-        u.email.toLowerCase() === email.toLowerCase()
-      );
+      const result = await response.json();
 
-      if (!user) {
-        throw new Error('User not found');
+      if (!response.ok) {
+        throw new Error(result.message || 'Password reset failed');
       }
 
-      // In a real app, this would send a password reset email
-      return { success: true, message: 'Password reset email sent' };
+      return {
+        success: true,
+        message: result.message || 'Password reset instructions sent to your email'
+      };
     } catch (error) {
+      console.error('Password reset error:', error);
       throw error;
     }
   }
@@ -282,6 +339,103 @@ class AuthService {
     } catch (error) {
       throw error;
     }
+  }
+
+  /**
+   * Set up automatic token refresh
+   * Refreshes token every 23 hours to keep user logged in
+   */
+  setupTokenRefresh() {
+    // Clear any existing timer
+    if (this.refreshTokenTimer) {
+      clearTimeout(this.refreshTokenTimer);
+    }
+
+    // Set up refresh timer for 23 hours (23 * 60 * 60 * 1000 ms)
+    this.refreshTokenTimer = setTimeout(async () => {
+      try {
+        console.log('🔄 Auto-refreshing authentication token...');
+        await this.refreshToken();
+        this.setupTokenRefresh(); // Set up next refresh
+      } catch (error) {
+        console.error('❌ Auto-refresh failed:', error);
+        // Token refresh failed, user needs to log in again
+        this.logout();
+      }
+    }, 23 * 60 * 60 * 1000); // 23 hours
+  }
+
+  /**
+   * Check if session is expired (more than 7 days old)
+   * @returns {boolean} Whether session is expired
+   */
+  isSessionExpired() {
+    const loginTimestamp = localStorage.getItem('auth_login_timestamp');
+    if (!loginTimestamp) return true;
+
+    const loginTime = parseInt(loginTimestamp);
+    const currentTime = Date.now();
+    const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+    return (currentTime - loginTime) > sevenDaysInMs;
+  }
+
+  /**
+   * Validate stored session
+   * @returns {boolean} Whether session is valid
+   */
+  validateStoredSession() {
+    // Check if we have required data
+    if (!this.token || !localStorage.getItem('auth_user')) {
+      return false;
+    }
+
+    // Check if session is expired
+    if (this.isSessionExpired()) {
+      console.log('🕒 Session expired (>7 days), logging out...');
+      this.logout();
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Generate a unique device identifier
+   * @returns {string} Device identifier
+   */
+  generateDeviceId() {
+    // Check if device ID already exists
+    const existingDeviceId = localStorage.getItem('auth_device_id');
+    if (existingDeviceId) {
+      return existingDeviceId;
+    }
+
+    // Generate new device ID based on browser characteristics
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.textBaseline = 'top';
+    ctx.font = '14px Arial';
+    ctx.fillText('Device fingerprint', 2, 2);
+    
+    const deviceFingerprint = [
+      navigator.userAgent,
+      navigator.language,
+      screen.width + 'x' + screen.height,
+      new Date().getTimezoneOffset(),
+      canvas.toDataURL()
+    ].join('|');
+
+    // Create a simple hash of the fingerprint
+    let hash = 0;
+    for (let i = 0; i < deviceFingerprint.length; i++) {
+      const char = deviceFingerprint.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+
+    const deviceId = 'device_' + Math.abs(hash).toString(36) + '_' + Date.now();
+    return deviceId;
   }
 }
 

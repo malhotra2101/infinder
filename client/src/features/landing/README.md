@@ -9,8 +9,6 @@ pages/landing-page/
 ├── components/           # Landing page specific components
 │   ├── Hero/            # Hero section with 3D cube
 │   ├── Cube/            # 3D cube component
-│   ├── ScrollRevealText/ # Scroll reveal text animations
-│   ├── MenuToggle/      # Menu toggle component
 │   ├── About.jsx        # About section component
 │   ├── Contact.jsx      # Contact section component
 │   ├── Services.jsx     # Services section component
@@ -33,12 +31,6 @@ The main hero section featuring an interactive 3D cube and call-to-action button
 ### Cube
 A 3D cube component with interactive rotation and face detection.
 
-### ScrollRevealText
-Text animations that reveal on scroll.
-
-### MenuToggle
-Menu toggle component for navigation.
-
 ### About, Contact, Services, Showcase, Footer
 Section components for the landing page content.
 
@@ -47,7 +39,7 @@ Section components for the landing page content.
 ```jsx
 import LandingPage from './pages/landing-page';
 // or
-import { Hero, Cube, MenuToggle } from './pages/landing-page/components';
+import { Hero, Cube } from './pages/landing-page/components';
 ```
 
 ## Styles

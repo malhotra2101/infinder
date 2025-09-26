@@ -16,11 +16,12 @@ export default defineConfig({
   
   // Development server configuration - optimized for speed
   server: {
-    port: 3001, // Different port to avoid conflicts
+    port: 3004, // Different port to avoid conflicts
     host: true, // Allow external connections
     open: true, // Open browser on start
     hmr: {
       overlay: false, // Disable HMR overlay for faster updates
+      port: 3004, // Ensure HMR uses the same port
     },
     watch: {
       usePolling: false, // Use native file watching for better performance
@@ -41,10 +42,38 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
+          // Core dependencies
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          utils: ['axios']
-        }
+          
+          // Feature-based chunks for better caching
+          'brand-portal': [
+            'src/features/brand-portal'
+          ],
+          'influencer-portal': [
+            'src/features/influencer-portal'
+          ],
+          'auth': [
+            'src/features/auth'
+          ],
+          'email-marketing': [
+            'src/features/email-marketing'
+          ],
+          
+          // Shared components chunk
+          'shared': [
+            'src/shared'
+          ],
+          
+          // Landing page (separate for better initial load)
+          'landing': [
+            'src/features/landing'
+          ]
+        },
+        // Optimize chunk names for better caching
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
       }
     },
     terserOptions: {

@@ -18,7 +18,6 @@ export { default as Hero } from './hero/Hero.jsx';
 // Utility Components
 export { default as Toast } from './Toast.jsx';
 export { default as ToastContainer } from './ToastContainer.jsx';
-export { default as LazyComponent } from './LazyComponent.jsx';
 export { default as LazyImage } from './LazyImage.jsx';
 export { default as Button } from './Button.jsx';
 

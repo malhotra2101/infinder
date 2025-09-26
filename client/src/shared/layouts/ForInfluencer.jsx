@@ -6,11 +6,11 @@ import { Helmet } from 'react-helmet-async';
 import Sidebar from '../components/shared/sidebar/Sidebar.jsx';
 import SidebarToggle from '../components/shared/sidebar/SidebarToggle.jsx';
 import Navbar from '../components/shared/navbar/Navbar.jsx';
-import InfluencerPage from '../../influencer/pages/InfluencerPage';
-import InfluencerDashboardPage from '../../influencer/pages/InfluencerDashboardPage';
-import InfluencerSearchPage from '../../influencer/pages/InfluencerSearchPage';
-import InfluencerSelectedCampaignsPage from '../../influencer/pages/InfluencerSelectedCampaignsPage';
-import InfluencerProfilePage from '../../influencer/pages/InfluencerProfilePage';
+import InfluencerPage from '../../features/influencer-portal/pages/InfluencerPage';
+import InfluencerDashboardPage from '../../features/influencer-portal/pages/InfluencerDashboardPage';
+import InfluencerSearchPage from '../../features/influencer-portal/pages/InfluencerSearchPage';
+import InfluencerSelectedCampaignsPage from '../../features/influencer-portal/pages/InfluencerSelectedCampaignsPage';
+import InfluencerProfilePage from '../../features/influencer-portal/pages/InfluencerProfilePage';
 
 // Import styles
 import '../components/shared/sidebar/Sidebar.css';

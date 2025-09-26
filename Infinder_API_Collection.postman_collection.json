@@ -1,0 +1,724 @@
+{
+  "info": {
+    "name": "Infinder API Collection",
+    "description": "Complete API collection for Infinder platform - Influencer Marketing Platform",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5051",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "brand_id",
+      "value": "20",
+      "type": "string"
+    },
+    {
+      "key": "campaign_id",
+      "value": "23",
+      "type": "string"
+    },
+    {
+      "key": "influencer_id",
+      "value": "1022",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/ping",
+              "host": ["{{base_url}}"],
+              "path": ["api", "ping"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"test123\",\n  \"brandName\": \"Test Brand\",\n  \"contactName\": \"Test Contact\",\n  \"industry\": \"tech\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signup"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"test123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Extract and save JWT token",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.token) {",
+                  "        pm.collectionVariables.set('jwt_token', responseJson.token);",
+                  "        console.log('✅ JWT token saved:', responseJson.token);",
+                  "        pm.test('Login successful and token saved', function () {",
+                  "            pm.expect(responseJson.success).to.be.true;",
+                  "            pm.expect(responseJson.token).to.not.be.undefined;",
+                  "        });",
+                  "    } else {",
+                  "        console.log('❌ No token in response');",
+                  "    }",
+                  "} else {",
+                  "    console.log('❌ Login failed with status:', pm.response.code);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Check if JWT token is available",
+                  "const token = pm.collectionVariables.get('jwt_token');",
+                  "if (token) {",
+                  "    console.log('✅ Using JWT token:', token.substring(0, 50) + '...');",
+                  "} else {",
+                  "    console.log('❌ No JWT token found. Please run User Login first.');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test user profile response",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.test('User profile retrieved successfully', function () {",
+                  "        pm.expect(responseJson.success).to.be.true;",
+                  "        pm.expect(responseJson.user).to.not.be.undefined;",
+                  "        pm.expect(responseJson.user.email).to.eql('testuser@example.com');",
+                  "    });",
+                  "    console.log('✅ User profile:', responseJson.user);",
+                  "} else {",
+                  "    console.log('❌ User profile request failed:', pm.response.code, pm.response.text());",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "👥 Influencers",
+      "item": [
+        {
+          "name": "Get All Influencers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/influencers?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "influencers"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Influencer by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/influencers/{{influencer_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "influencers", "{{influencer_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Influencer Counts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/influencers/lists/counts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "influencers", "lists", "counts"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📈 Campaigns",
+      "item": [
+        {
+          "name": "Get All Campaigns",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/campaigns",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Campaign",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"campaignName\": \"Test Campaign\",\n  \"brandName\": \"Test Brand\",\n  \"leadflow\": \"CPA\",\n  \"trackingUrl\": \"https://test.com\",\n  \"vertical\": \"tech\",\n  \"platform\": \"instagram\",\n  \"budget\": 1000,\n  \"currency\": \"USD\",\n  \"status\": \"draft\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/campaigns",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Campaign by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/campaigns/{{campaign_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns", "{{campaign_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Campaign Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/campaigns/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns", "stats"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Campaign",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"campaignName\": \"Updated Campaign Name\",\n  \"status\": \"active\",\n  \"budget\": 1500\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/campaigns/{{campaign_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns", "{{campaign_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Campaign",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/campaigns/{{campaign_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "campaigns", "{{campaign_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🤝 Collaboration Requests",
+      "item": [
+        {
+          "name": "Get All Collaboration Requests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/collaboration-requests",
+              "host": ["{{base_url}}"],
+              "path": ["api", "collaboration-requests"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Collaboration Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"influencer_id\": 1022,\n  \"campaign_id\": 13,\n  \"message\": \"We would love to collaborate with you!\",\n  \"offer_amount\": 500,\n  \"currency\": \"USD\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/collaboration-requests",
+              "host": ["{{base_url}}"],
+              "path": ["api", "collaboration-requests"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Collaboration Request by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/collaboration-requests/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "collaboration-requests", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Collaboration Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/collaboration-requests/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "collaboration-requests", "stats"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Collaboration Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"accepted\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/collaboration-requests/1/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "collaboration-requests", "1", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Collaboration Request",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/collaboration-requests/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "collaboration-requests", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📧 Email Marketing",
+      "item": [
+        {
+          "name": "Get Email Templates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/email-templates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-templates"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Email Template",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Template\",\n  \"category\": \"initial\",\n  \"subject_template\": \"Test Subject - {brand_name}\",\n  \"body_template\": \"Hello {influencer_name}, this is a test email from {brand_name}.\",\n  \"variables\": {\n    \"brand_name\": \"Brand name\",\n    \"influencer_name\": \"Influencer name\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/email-templates",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-templates"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Email Sequences by Brand",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/email-sequences/brand/{{brand_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-sequences", "brand", "{{brand_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Email Sequence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"brand_id\": 20,\n  \"campaign_id\": 13,\n  \"name\": \"Test Sequence\",\n  \"templates\": [1, 2],\n  \"delay_days\": [0, 3, 7],\n  \"status\": \"draft\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/email-sequences",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-sequences"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Email Sequence by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/email-sequences/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-sequences", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Start Email Sequence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/email-sequences/1/start",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-sequences", "1", "start"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Email Tracking Analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/email-tracking/analytics/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-tracking", "analytics", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Track Email Open",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/email-tracking/test123/open",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-tracking", "test123", "open"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Track Email Click",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/email-tracking/test123/click?url=https://example.com",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-tracking", "test123", "click"],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "https://example.com"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Record Influencer Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tracking_id\": \"test123\",\n  \"response_type\": \"interested\",\n  \"message\": \"I am interested in this collaboration!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/email-tracking/response",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-tracking", "response"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Handle Unsubscribe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/email-tracking/unsubscribe?seq=1&inf=1022",
+              "host": ["{{base_url}}"],
+              "path": ["api", "email-tracking", "unsubscribe"],
+              "query": [
+                {
+                  "key": "seq",
+                  "value": "1"
+                },
+                {
+                  "key": "inf",
+                  "value": "1022"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🌐 System APIs",
+      "item": [
+        {
+          "name": "API Information",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/info",
+              "host": ["{{base_url}}"],
+              "path": ["api", "info"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Server-Sent Events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/events",
+              "host": ["{{base_url}}"],
+              "path": ["api", "events"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// This runs before each request"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-extract JWT token from login response",
+          "if (pm.response && pm.response.json() && pm.response.json().token) {",
+          "    pm.collectionVariables.set('jwt_token', pm.response.json().token);",
+          "    console.log('JWT token extracted and saved:', pm.response.json().token);",
+          "    pm.test('JWT token saved', function () {",
+          "        pm.expect(pm.collectionVariables.get('jwt_token')).to.not.be.undefined;",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}

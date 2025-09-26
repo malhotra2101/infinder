@@ -62,8 +62,8 @@ playwright-report/
 .local
 local/
 
-# Supabase
-.supabase/
+# Database
+# Add database-specific ignore patterns here
 
 # Security
 *.pem

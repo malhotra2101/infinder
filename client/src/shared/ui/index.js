@@ -1,7 +1,7 @@
 // Shared UI Components
 export { default as Button } from './Button';
 
-// TODO: Add more shared UI components as they are created
+// Additional UI components exported as they are developed
 // export { default as Input } from './Input';
 // export { default as Modal } from './Modal';
 // export { default as Card } from './Card';

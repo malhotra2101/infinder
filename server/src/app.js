@@ -1,17 +1,17 @@
 const express = require('express');
-const { applySecurityMiddleware } = require('./middleware/security');
-const { createLogger } = require('./middleware/logger');
+const { applySecurityMiddleware } = require('./shared/middleware/security');
+const { createLogger } = require('./shared/middleware/logger');
 const config = require('./config/environment');
 
-// Import routes
-const influencerRoutes = require('./routes/influencerRoutes');
-const campaignRoutes = require('./routes/campaignRoutes');
-const applicationRoutes = require('./routes/applicationRoutes');
-const collaborationRoutes = require('./routes/collaborationRoutes');
-const brandRoutes = require('./routes/brandRoutes');
-const campaignInfluencerRoutes = require('./routes/campaignInfluencerRoutes');
-const rejectedInfluencerRoutes = require('./routes/rejectedInfluencerRoutes');
-const healthRoutes = require('./routes/healthRoutes');
+// Import routes by feature
+const authRoutes = require('./features/auth/routes/authRoutes');
+const influencerRoutes = require('./features/influencers/routes/influencerRoutes');
+const campaignRoutes = require('./features/campaigns/routes/campaignRoutes');
+const collaborationRoutes = require('./features/collaboration/routes/collaborationRoutes');
+const healthRoutes = require('./shared/routes/healthRoutes');
+const emailTemplateRoutes = require('./features/email-marketing/routes/emailTemplateRoutes');
+const emailSequenceRoutes = require('./features/email-marketing/routes/emailSequenceRoutes');
+const emailTrackingRoutes = require('./features/email-marketing/routes/emailTrackingRoutes');
 
 // WebSocket setup
 const WebSocket = require('ws');
@@ -219,14 +219,14 @@ const createApp = () => {
   });
 
   // API routes
+  app.use('/api/auth', authRoutes);
   app.use('/api/influencers', influencerRoutes);
   app.use('/api/campaigns', campaignRoutes);
-  app.use('/api/applications', applicationRoutes);
   app.use('/api/collaboration-requests', collaborationRoutes);
-  app.use('/api/brands', brandRoutes);
-  app.use('/api/campaign-influencers', campaignInfluencerRoutes);
-  app.use('/api/rejected-influencers', rejectedInfluencerRoutes);
   app.use('/api/health', healthRoutes);
+  app.use('/api/email-templates', emailTemplateRoutes);
+  app.use('/api/email-sequences', emailSequenceRoutes);
+  app.use('/api/email-tracking', emailTrackingRoutes);
 
   // Error handling middleware
   app.use((err, req, res, next) => {

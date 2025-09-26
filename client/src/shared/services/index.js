@@ -6,5 +6,4 @@
 export { default as authService } from './auth.js';
 export * from './api.js';
 export * from './backendApi.js';
-export * from './dashboardApi.js';
-export * from './supabase.js'; 
+// Additional services can be exported here as needed 

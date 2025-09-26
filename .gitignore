@@ -1,3 +1,17 @@
+# Root ignore
+
+# Build artifacts
+client/dist/
+
+# Logs
+server-run.log
+*.log
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
 # Dependencies
 node_modules/
 */node_modules/
@@ -206,3 +220,10 @@ storybook-static
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.* 
+# Build artifacts
+client/dist/
+*.log
+server-run.log
+client/dist/
+server-run.log
+*.log

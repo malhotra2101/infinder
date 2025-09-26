@@ -1,213 +1,342 @@
-/**
- * API Service
- * 
- * Centralized service for making HTTP requests to the backend API.
- * Provides consistent error handling, request/response interceptors,
- * and standardized API calls.
- */
-
-import axios from 'axios';
-import { ROUTES } from '../constants/routes.js';
-
-// API base configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5052';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { searchInfluencers, getInfluencersByListType, addToList, removeFromList } from './backendApi';
 
 /**
- * Create axios instance with default configuration
+ * Centralized API service layer with React Query integration
+ * Provides consistent data fetching, caching, and error handling
  */
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000, // 10 seconds
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true, // Include cookies in requests
-});
 
-/**
- * Request interceptor for adding auth tokens and logging
- */
-apiClient.interceptors.request.use(
-  (config) => {
-    // TODO: Add authentication token if available
-    // const token = localStorage.getItem('authToken');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
-    
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-/**
- * Response interceptor for error handling and logging
- */
-apiClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // Handle specific error cases
-    if (error.response?.status === 401) {
-      // TODO: Handle unauthorized access
-      // localStorage.removeItem('authToken');
-      // window.location.href = '/login';
-    }
-    
-    return Promise.reject(error);
-  }
-);
-
-/**
- * Health check API
- * @returns {Promise<Object>} Health check response
- */
-export const healthCheck = async () => {
-  try {
-    const response = await apiClient.get(ROUTES.API.PING);
-    return response.data;
-  } catch (error) {
-    throw new Error(`Health check failed: ${error.message}`);
-  }
+// Query Keys
+export const QUERY_KEYS = {
+  INFLUENCERS: 'influencers',
+  CAMPAIGNS: 'campaigns',
+  BRANDS: 'brands',
+  APPLICATIONS: 'applications',
+  COLLABORATIONS: 'collaborations',
+  DASHBOARD: 'dashboard',
+  PROFILE: 'profile',
+  SEARCH: 'search',
 };
 
-/**
- * Get system information
- * @returns {Promise<Object>} System info response
- */
-export const getSystemInfo = async () => {
-  try {
-    const response = await apiClient.get(ROUTES.API.INFO);
-    return response.data;
-  } catch (error) {
-    throw new Error(`Failed to get system info: ${error.message}`);
-  }
+// Influencer API hooks
+export const useInfluencers = (filters = {}) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.INFLUENCERS, filters],
+    queryFn: () => backendApi.getInfluencers(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+  });
 };
 
-/**
- * Generic API request wrapper
- * @param {string} method - HTTP method
- * @param {string} url - API endpoint
- * @param {Object} data - Request data
- * @param {Object} config - Additional axios config
- * @returns {Promise<Object>} API response
- */
-export const apiRequest = async (method, url, data = null, config = {}) => {
-  try {
-    const response = await apiClient.request({
-      method,
-      url,
-      data,
-      ...config,
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error(`API request failed: ${error.message}`);
-  }
+export const useInfluencer = (id) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.INFLUENCERS, id],
+    queryFn: () => backendApi.getInfluencer(id),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000,
+  });
 };
 
-/**
- * Contact form submission
- * @param {Object} formData - Contact form data
- * @returns {Promise<Object>} Submission response
- */
-export const submitContactForm = async (formData) => {
-  try {
-    // TODO: Implement actual contact form submission
-    // const response = await apiClient.post('/api/contact', formData);
-    // return response.data;
-    
-    // Mock response for now
-    return {
-      success: true,
-      message: 'Contact form submitted successfully',
-      data: formData
-    };
-  } catch (error) {
-    throw new Error(`Contact form submission failed: ${error.message}`);
-  }
+export const useCreateInfluencer = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data) => backendApi.createInfluencer(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INFLUENCERS] });
+    },
+  });
 };
 
-/**
- * Newsletter signup
- * @param {string} email - Email address
- * @returns {Promise<Object>} Signup response
- */
-export const newsletterSignup = async (email) => {
-  try {
-    // TODO: Implement actual newsletter signup
-    // const response = await apiClient.post('/api/newsletter', { email });
-    // return response.data;
-    
-    // Mock response for now
-    return {
-      success: true,
-      message: 'Newsletter signup successful',
-      data: { email }
-    };
-  } catch (error) {
-    throw new Error(`Newsletter signup failed: ${error.message}`);
-  }
+export const useUpdateInfluencer = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }) => backendApi.updateInfluencer(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INFLUENCERS, id] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INFLUENCERS] });
+    },
+  });
 };
 
-/**
- * Get influencers by list type (selected, rejected, suggested)
- * @param {string} listType - Type of list (selected, rejected, suggested)
- * @param {string} queryParams - Query parameters for pagination and filtering
- * @returns {Promise<Object>} Influencers response
- */
-export const getInfluencersByListType = async (listType, queryParams = '') => {
-  try {
-    const url = `/api/influencers/lists/${listType}${queryParams ? `?${queryParams}` : ''}`;
-    const response = await apiClient.get(url);
-    return response.data;
-  } catch (error) {
-    throw new Error(`Failed to fetch ${listType} influencers: ${error.message}`);
-  }
+export const useDeleteInfluencer = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (id) => backendApi.deleteInfluencer(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INFLUENCERS] });
+    },
+  });
 };
 
-/**
- * Get list counts for selected, rejected, and suggested influencers
- * @returns {Promise<Object>} List counts response
- */
-export const getListCounts = async () => {
-  try {
-    const response = await apiClient.get('/api/influencers/lists/counts');
-    return response.data;
-  } catch (error) {
-    throw new Error(`Failed to fetch list counts: ${error.message}`);
-  }
+// Campaign API hooks
+export const useCampaigns = (filters = {}) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.CAMPAIGNS, filters],
+    queryFn: () => backendApi.getCampaigns(filters),
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
 };
 
-/**
- * Add influencer to list
- * @param {Object} data - Data containing influencerId and listType
- * @returns {Promise<Object>} Add to list response
- */
-export const addToList = async (data) => {
-  try {
-    const response = await apiClient.post('/api/influencers/lists/add', data);
-    return response.data;
-  } catch (error) {
-    throw new Error(`Failed to add influencer to list: ${error.message}`);
-  }
+export const useCampaign = (id) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.CAMPAIGNS, id],
+    queryFn: () => backendApi.getCampaign(id),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000,
+  });
 };
 
-/**
- * Remove influencer from list
- * @param {Object} data - Data containing influencerId and listType
- * @returns {Promise<Object>} Remove from list response
- */
-export const removeFromList = async (data) => {
-  try {
-    const response = await apiClient.post('/api/influencers/lists/remove', data);
-    return response.data;
-  } catch (error) {
-    throw new Error(`Failed to remove influencer from list: ${error.message}`);
-  }
+export const useCreateCampaign = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data) => backendApi.createCampaign(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CAMPAIGNS] });
+    },
+  });
 };
 
-export default apiClient; 
+export const useUpdateCampaign = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }) => backendApi.updateCampaign(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CAMPAIGNS, id] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CAMPAIGNS] });
+    },
+  });
+};
+
+export const useDeleteCampaign = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (id) => backendApi.deleteCampaign(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CAMPAIGNS] });
+    },
+  });
+};
+
+// Brand API hooks
+export const useBrands = (filters = {}) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.BRANDS, filters],
+    queryFn: () => backendApi.getBrands(filters),
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
+};
+
+export const useBrand = (id) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.BRANDS, id],
+    queryFn: () => backendApi.getBrand(id),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useCreateBrand = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data) => backendApi.createBrand(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.BRANDS] });
+    },
+  });
+};
+
+export const useUpdateBrand = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }) => backendApi.updateBrand(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.BRANDS, id] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.BRANDS] });
+    },
+  });
+};
+
+export const useDeleteBrand = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (id) => backendApi.deleteBrand(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.BRANDS] });
+    },
+  });
+};
+
+// Application API hooks
+export const useApplications = (filters = {}) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.APPLICATIONS, filters],
+    queryFn: () => backendApi.getApplications(filters),
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
+};
+
+export const useApplication = (id) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.APPLICATIONS, id],
+    queryFn: () => backendApi.getApplication(id),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useCreateApplication = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data) => backendApi.createApplication(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.APPLICATIONS] });
+    },
+  });
+};
+
+export const useUpdateApplication = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }) => backendApi.updateApplication(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.APPLICATIONS, id] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.APPLICATIONS] });
+    },
+  });
+};
+
+export const useDeleteApplication = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (id) => backendApi.deleteApplication(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.APPLICATIONS] });
+    },
+  });
+};
+
+// Collaboration API hooks
+export const useCollaborations = (filters = {}) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.COLLABORATIONS, filters],
+    queryFn: () => backendApi.getCollaborations(filters),
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
+};
+
+export const useCollaboration = (id) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.COLLABORATIONS, id],
+    queryFn: () => backendApi.getCollaboration(id),
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useCreateCollaboration = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (data) => backendApi.createCollaboration(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.COLLABORATIONS] });
+    },
+  });
+};
+
+export const useUpdateCollaboration = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }) => backendApi.updateCollaboration(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.COLLABORATIONS, id] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.COLLABORATIONS] });
+    },
+  });
+};
+
+export const useDeleteCollaboration = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (id) => backendApi.deleteCollaboration(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.COLLABORATIONS] });
+    },
+  });
+};
+
+// Dashboard API hooks
+export const useDashboardData = () => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.DASHBOARD],
+    queryFn: () => backendApi.getDashboardData(),
+    staleTime: 2 * 60 * 1000, // 2 minutes for dashboard data
+    retry: 2,
+  });
+};
+
+// Search API hooks
+export const useSearch = (query, filters = {}) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.SEARCH, query, filters],
+    queryFn: () => backendApi.search(query, filters),
+    enabled: !!query,
+    staleTime: 2 * 60 * 1000,
+    retry: 2,
+  });
+};
+
+// Profile API hooks
+export const useProfile = (id) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.PROFILE, id],
+    queryFn: () => backendApi.getProfile(id),
+    enabled: !!id,
+    staleTime: 10 * 60 * 1000, // 10 minutes for profile data
+  });
+};
+
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }) => backendApi.updateProfile(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.PROFILE, id] });
+    },
+  });
+};
+
+// Utility functions
+export const prefetchQuery = (queryClient, queryKey, queryFn) => {
+  return queryClient.prefetchQuery({
+    queryKey,
+    queryFn,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const invalidateQueries = (queryClient, queryKey) => {
+  return queryClient.invalidateQueries({ queryKey });
+};
+
+// Note: Individual API functions are imported from backendApi.js
+// and used within the React Query hooks above 

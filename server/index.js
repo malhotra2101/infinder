@@ -9,8 +9,8 @@ require('dotenv').config();
  */
 
 const { createApp } = require('./src/app');
-const { initializeSupabase } = require('./src/config/supabase');
 const config = require('./src/config/environment');
+const emailQueueManager = require('./src/features/email-marketing/services/emailQueueManager');
 
 /**
  * Start the server
@@ -19,12 +19,7 @@ const config = require('./src/config/environment');
  */
 const startServer = async (port = config.port) => {
   try {
-    // Initialize database connection
-    const supabase = initializeSupabase();
-    
-    if (config.nodeEnv === 'development') {
-      console.log('✅ Database connection initialized');
-    }
+    // Database connection will be configured for new database design
 
     // Create Express application with WebSocket support
     const { app, server, wss } = createApp();
@@ -39,6 +34,9 @@ const startServer = async (port = config.port) => {
         console.log(`🌐 Environment: ${config.nodeEnv}`);
         console.log(`📝 API Documentation: http://localhost:${port}/api/info`);
       }
+      
+      // Start email queue manager
+      emailQueueManager.start(60000); // Process every minute
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
@@ -53,6 +51,10 @@ const handleGracefulShutdown = (signal) => {
   if (config.nodeEnv === 'development') {
     console.log(`🛑 ${signal} received, shutting down gracefully`);
   }
+  
+  // Stop email queue manager
+  emailQueueManager.stop();
+  
   process.exit(0);
 };
 

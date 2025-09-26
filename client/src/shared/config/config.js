@@ -123,3 +123,10 @@ export const PAGE_CONFIG = {
     description: "Discover and connect with the perfect influencers for your brand using our advanced search and matching tools."
   }
 }; 
+
+// API configuration
+export const API_CONFIG = {
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5051',
+  // Force refresh to clear cache
+  CACHE_BUST: Date.now()
+};

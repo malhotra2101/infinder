@@ -29,10 +29,15 @@ export const AuthProvider = ({ children }) => {
    * Initialize authentication state
    */
   useEffect(() => {
-    const initializeAuth = () => {
+    const initializeAuth = async () => {
       try {
+        // AuthService handles initialization from stored tokens
+        await new Promise(resolve => setTimeout(resolve, 100)); // Small delay for initialization
+        
         const currentUser = authService.getCurrentUser();
         const authenticated = authService.isUserAuthenticated();
+        
+        console.log('🔐 Auth initialization:', { authenticated, user: currentUser?.email });
         
         setUser(currentUser);
         setIsAuthenticated(authenticated);
@@ -57,11 +62,18 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoading(true);
       const result = await authService.login(credentials);
-      setUser(result.user);
-      setIsAuthenticated(true);
+      
+      if (result.success) {
+        setUser(result.user);
+        setIsAuthenticated(true);
+      }
+      
       return result;
     } catch (error) {
-      throw error;
+      return {
+        success: false,
+        message: error.message || 'Login failed'
+      };
     } finally {
       setIsLoading(false);
     }
@@ -76,11 +88,18 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoading(true);
       const result = await authService.signup(userData);
-      setUser(result.user);
-      setIsAuthenticated(true);
+      
+      if (result.success) {
+        setUser(result.user);
+        setIsAuthenticated(true);
+      }
+      
       return result;
     } catch (error) {
-      throw error;
+      return {
+        success: false,
+        message: error.message || 'Signup failed'
+      };
     } finally {
       setIsLoading(false);
     }

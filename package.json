@@ -10,7 +10,7 @@
     "build": "pnpm --filter infinder-client build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["mern", "react", "express", "infinder", "influencer-marketing"],
+  "keywords": ["mern", "react", "express", "infinder", "influencer-marketing", "database"],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.12.4",

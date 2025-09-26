@@ -1,123 +1,45 @@
 /**
- * Application Constants
- *
- * Centralized export of all application constants for better organization
- * and easier imports throughout the application.
+ * Centralized application constants
+ * All application-wide constants should be defined here
  */
 
-// Application constants
-export const APP_CONFIG = {
-  name: 'Infinder',
-  version: '1.0.0',
-  description: 'Influencer Marketing Platform',
-  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:5052/api',
-  environment: import.meta.env.MODE || 'development',
+// API Configuration
+export const API_CONFIG = {
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
+  TIMEOUT: 10000,
+  RETRY_ATTEMPTS: 3,
 };
 
-// API endpoints
-export const API_ENDPOINTS = {
-  // Auth
-  auth: {
-    login: '/auth/login',
-    register: '/auth/register',
-    logout: '/auth/logout',
-    refresh: '/auth/refresh',
-  },
-  
-  // Influencers
-  influencers: {
-    list: '/influencers',
-    detail: (id) => `/influencers/${id}`,
-    search: '/influencers/search',
-    addToList: '/influencers/add-to-list',
-    removeFromList: '/influencers/remove-from-list',
-    getListCounts: '/influencers/list-counts',
-    getByListType: (type) => `/influencers/list/${type}`,
-    getCampaigns: (id) => `/influencers/${id}/campaigns`,
-    resetLists: '/influencers/reset-lists',
-    updateListStatus: (id) => `/influencers/list-status/${id}`,
-  },
-  
-  // Campaigns
-  campaigns: {
-    list: '/campaigns',
-    detail: (id) => `/campaigns/${id}`,
-    create: '/campaigns',
-    update: (id) => `/campaigns/${id}`,
-    delete: (id) => `/campaigns/${id}`,
-    assignInfluencer: (id) => `/campaigns/${id}/assign-influencer`,
-    removeInfluencer: (id) => `/campaigns/${id}/remove-influencer`,
-  },
-  
-  // Health
-  health: {
-    ping: '/ping',
-    info: '/info',
-  },
-};
-
-// Routes
+// Application Routes
 export const ROUTES = {
-  // Public routes
-  home: '/',
-  login: '/login',
-  signup: '/signup',
-  
-  // Protected routes
-  dashboard: '/dashboard',
-  search: '/search',
-  campaigns: '/campaigns',
-  profile: '/profile',
-  contact: '/contact',
-  
-  // API routes
-  api: API_ENDPOINTS,
+  HOME: '/',
+  LOGIN: '/login',
+  SIGNUP: '/signup',
+  DASHBOARD: '/dashboard',
+  CAMPAIGNS: '/campaigns',
+  SEARCH: '/search',
+  COLLABORATION: '/collaboration',
+  CONTACT: '/contact',
+  PROFILE: '/profile',
 };
 
-// Influencer platforms
-export const PLATFORMS = {
-  INSTAGRAM: 'instagram',
-  TIKTOK: 'tiktok',
-  YOUTUBE: 'youtube',
-  TWITTER: 'twitter',
-  LINKEDIN: 'linkedin',
-  FACEBOOK: 'facebook',
-  TWITCH: 'twitch',
-  SNAPCHAT: 'snapchat',
+// Authentication
+export const AUTH = {
+  TOKEN_KEY: 'infinder_auth_token',
+  REFRESH_TOKEN_KEY: 'infinder_refresh_token',
+  USER_KEY: 'infinder_user',
+  TOKEN_EXPIRY: 24 * 60 * 60 * 1000, // 24 hours
 };
 
-// Platform display names
-export const PLATFORM_NAMES = {
-  [PLATFORMS.INSTAGRAM]: 'Instagram',
-  [PLATFORMS.TIKTOK]: 'TikTok',
-  [PLATFORMS.YOUTUBE]: 'YouTube',
-  [PLATFORMS.TWITTER]: 'Twitter',
-  [PLATFORMS.LINKEDIN]: 'LinkedIn',
-  [PLATFORMS.FACEBOOK]: 'Facebook',
-  [PLATFORMS.TWITCH]: 'Twitch',
-  [PLATFORMS.SNAPCHAT]: 'Snapchat',
+// User Roles
+export const USER_ROLES = {
+  ADMIN: 'admin',
+  BRAND: 'brand',
+  INFLUENCER: 'influencer',
+  MODERATOR: 'moderator',
 };
 
-// Platform colors
-export const PLATFORM_COLORS = {
-  [PLATFORMS.INSTAGRAM]: '#E4405F',
-  [PLATFORMS.TIKTOK]: '#000000',
-  [PLATFORMS.YOUTUBE]: '#FF0000',
-  [PLATFORMS.TWITTER]: '#1DA1F2',
-  [PLATFORMS.LINKEDIN]: '#0077B5',
-  [PLATFORMS.FACEBOOK]: '#1877F2',
-  [PLATFORMS.TWITCH]: '#9146FF',
-  [PLATFORMS.SNAPCHAT]: '#FFFC00',
-};
-
-// List types
-export const LIST_TYPES = {
-  SELECTED: 'selected',
-  REJECTED: 'rejected',
-  PENDING: 'pending',
-};
-
-// Campaign statuses
+// Campaign Status
 export const CAMPAIGN_STATUS = {
   DRAFT: 'draft',
   ACTIVE: 'active',
@@ -126,190 +48,291 @@ export const CAMPAIGN_STATUS = {
   CANCELLED: 'cancelled',
 };
 
-// Campaign status display names
-export const CAMPAIGN_STATUS_NAMES = {
-  [CAMPAIGN_STATUS.DRAFT]: 'Draft',
-  [CAMPAIGN_STATUS.ACTIVE]: 'Active',
-  [CAMPAIGN_STATUS.PAUSED]: 'Paused',
-  [CAMPAIGN_STATUS.COMPLETED]: 'Completed',
-  [CAMPAIGN_STATUS.CANCELLED]: 'Cancelled',
+// Application Status
+export const APPLICATION_STATUS = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+  WITHDRAWN: 'withdrawn',
 };
 
-// Campaign status colors
-export const CAMPAIGN_STATUS_COLORS = {
-  [CAMPAIGN_STATUS.DRAFT]: '#6B7280',
-  [CAMPAIGN_STATUS.ACTIVE]: '#10B981',
-  [CAMPAIGN_STATUS.PAUSED]: '#F59E0B',
-  [CAMPAIGN_STATUS.COMPLETED]: '#3B82F6',
-  [CAMPAIGN_STATUS.CANCELLED]: '#EF4444',
+// Collaboration Status
+export const COLLABORATION_STATUS = {
+  REQUESTED: 'requested',
+  ACCEPTED: 'accepted',
+  DECLINED: 'declined',
+  IN_PROGRESS: 'in_progress',
+  COMPLETED: 'completed',
+  CANCELLED: 'cancelled',
 };
 
-// Follower count ranges
-export const FOLLOWER_RANGES = {
-  MICRO: { min: 1000, max: 10000, label: '1K - 10K' },
-  SMALL: { min: 10000, max: 50000, label: '10K - 50K' },
-  MEDIUM: { min: 50000, max: 200000, label: '50K - 200K' },
-  LARGE: { min: 200000, max: 1000000, label: '200K - 1M' },
-  MEGA: { min: 1000000, max: null, label: '1M+' },
+// Platform Types
+export const PLATFORM_TYPES = {
+  INSTAGRAM: 'instagram',
+  YOUTUBE: 'youtube',
+  TIKTOK: 'tiktok',
+  TWITTER: 'twitter',
+  FACEBOOK: 'facebook',
+  LINKEDIN: 'linkedin',
+  TWITCH: 'twitch',
+  SNAPCHAT: 'snapchat',
+  PINTEREST: 'pinterest',
+  BLOG: 'blog',
+  PODCAST: 'podcast',
+  OTHER: 'other',
 };
 
-// Engagement rate ranges
-export const ENGAGEMENT_RANGES = {
-  LOW: { min: 0, max: 1, label: '0% - 1%' },
-  MEDIUM: { min: 1, max: 3, label: '1% - 3%' },
-  HIGH: { min: 3, max: 6, label: '3% - 6%' },
-  VERY_HIGH: { min: 6, max: null, label: '6%+' },
+// Content Categories
+export const CONTENT_CATEGORIES = {
+  FASHION: 'fashion',
+  BEAUTY: 'beauty',
+  FITNESS: 'fitness',
+  FOOD: 'food',
+  TRAVEL: 'travel',
+  TECHNOLOGY: 'technology',
+  GAMING: 'gaming',
+  EDUCATION: 'education',
+  BUSINESS: 'business',
+  LIFESTYLE: 'lifestyle',
+  ENTERTAINMENT: 'entertainment',
+  SPORTS: 'sports',
+  HEALTH: 'health',
+  PARENTING: 'parenting',
+  PETS: 'pets',
+  OTHER: 'other',
 };
 
-// Age groups
-export const AGE_GROUPS = {
-  TEEN: '13-17',
-  YOUNG_ADULT: '18-24',
-  ADULT: '25-34',
-  MIDDLE_AGE: '35-44',
-  SENIOR: '45+',
+// Audience Demographics
+export const AUDIENCE_DEMOGRAPHICS = {
+  AGE_RANGES: {
+    '13-17': '13-17',
+    '18-24': '18-24',
+    '25-34': '25-34',
+    '35-44': '35-44',
+    '45-54': '45-54',
+    '55+': '55+',
+  },
+  GENDERS: {
+    MALE: 'male',
+    FEMALE: 'female',
+    OTHER: 'other',
+  },
+  LOCATIONS: {
+    NORTH_AMERICA: 'north_america',
+    EUROPE: 'europe',
+    ASIA: 'asia',
+    AFRICA: 'africa',
+    SOUTH_AMERICA: 'south_america',
+    AUSTRALIA: 'australia',
+  },
 };
 
-// Countries (top countries for influencer marketing)
-export const COUNTRIES = [
-  'United States',
-  'United Kingdom',
-  'Canada',
-  'Australia',
-  'Germany',
-  'France',
-  'Spain',
-  'Italy',
-  'Netherlands',
-  'Sweden',
-  'Norway',
-  'Denmark',
-  'Finland',
-  'Switzerland',
-  'Austria',
-  'Belgium',
-  'Ireland',
-  'New Zealand',
-  'Japan',
-  'South Korea',
-  'Singapore',
-  'India',
-  'Brazil',
-  'Mexico',
-  'Argentina',
-  'Chile',
-  'Colombia',
-  'Peru',
-  'South Africa',
-  'Nigeria',
-  'Kenya',
-  'Egypt',
-  'Morocco',
-  'Turkey',
-  'Israel',
-  'UAE',
-  'Saudi Arabia',
-  'Qatar',
-  'Kuwait',
-  'Bahrain',
-  'Oman',
-];
+// Engagement Metrics
+export const ENGAGEMENT_METRICS = {
+  LIKES: 'likes',
+  COMMENTS: 'comments',
+  SHARES: 'shares',
+  SAVES: 'saves',
+  CLICKS: 'clicks',
+  VIEWS: 'views',
+  SUBSCRIBERS: 'subscribers',
+  FOLLOWERS: 'followers',
+};
 
-// Pagination defaults
+// Payment Methods
+export const PAYMENT_METHODS = {
+  CREDIT_CARD: 'credit_card',
+  DEBIT_CARD: 'debit_card',
+  BANK_TRANSFER: 'bank_transfer',
+  PAYPAL: 'paypal',
+  STRIPE: 'stripe',
+  CRYPTO: 'crypto',
+};
+
+// Notification Types
+export const NOTIFICATION_TYPES = {
+  APPLICATION_RECEIVED: 'application_received',
+  APPLICATION_APPROVED: 'application_approved',
+  APPLICATION_REJECTED: 'application_rejected',
+  COLLABORATION_REQUEST: 'collaboration_request',
+  COLLABORATION_ACCEPTED: 'collaboration_accepted',
+  COLLABORATION_DECLINED: 'collaboration_declined',
+  PAYMENT_RECEIVED: 'payment_received',
+  PAYMENT_SENT: 'payment_sent',
+  CAMPAIGN_UPDATE: 'campaign_update',
+  SYSTEM_MESSAGE: 'system_message',
+};
+
+// File Upload
+export const FILE_UPLOAD = {
+  MAX_SIZE: 10 * 1024 * 1024, // 10MB
+  ALLOWED_TYPES: {
+    IMAGE: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    VIDEO: ['video/mp4', 'video/avi', 'video/mov', 'video/wmv'],
+    DOCUMENT: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  },
+  MAX_FILES: 10,
+};
+
+// Pagination
 export const PAGINATION = {
-  DEFAULT_PAGE: 1,
-  DEFAULT_LIMIT: 20,
-  MAX_LIMIT: 100,
+  DEFAULT_PAGE_SIZE: 20,
+  MAX_PAGE_SIZE: 100,
+  PAGE_SIZE_OPTIONS: [10, 20, 50, 100],
 };
 
-// Local storage keys
-export const STORAGE_KEYS = {
-  AUTH_TOKEN: 'authToken',
-  USER_DATA: 'userData',
-  THEME: 'theme',
-  LANGUAGE: 'language',
-  SIDEBAR_COLLAPSED: 'sidebarCollapsed',
+// Search Filters
+export const SEARCH_FILTERS = {
+  SORT_OPTIONS: {
+    RELEVANCE: 'relevance',
+    FOLLOWERS_HIGH_TO_LOW: 'followers_high_to_low',
+    FOLLOWERS_LOW_TO_HIGH: 'followers_low_to_high',
+    ENGAGEMENT_HIGH_TO_LOW: 'engagement_high_to_low',
+    ENGAGEMENT_LOW_TO_HIGH: 'engagement_low_to_high',
+    PRICE_HIGH_TO_LOW: 'price_high_to_low',
+    PRICE_LOW_TO_HIGH: 'price_low_to_high',
+    NEWEST: 'newest',
+    OLDEST: 'oldest',
+  },
+  PRICE_RANGES: {
+    UNDER_100: 'under_100',
+    '100-500': '100-500',
+    '500-1000': '500-1000',
+    '1000-5000': '1000-5000',
+    '5000-10000': '5000-10000',
+    OVER_10000: 'over_10000',
+  },
+  FOLLOWER_RANGES: {
+    UNDER_1K: 'under_1k',
+    '1K-10K': '1k-10k',
+    '10K-50K': '10k-50k',
+    '50K-100K': '50k-100k',
+    '100K-500K': '100k-500k',
+    '500K-1M': '500k-1m',
+    OVER_1M: 'over_1m',
+  },
 };
 
-// Theme options
-export const THEMES = {
-  LIGHT: 'light',
-  DARK: 'dark',
-  SYSTEM: 'system',
-};
-
-// Error messages
+// Error Messages
 export const ERROR_MESSAGES = {
-  NETWORK_ERROR: 'Network error. Please check your connection.',
+  NETWORK_ERROR: 'Network error. Please check your connection and try again.',
   UNAUTHORIZED: 'You are not authorized to perform this action.',
-  FORBIDDEN: 'Access denied.',
+  FORBIDDEN: 'Access denied. You do not have permission to access this resource.',
   NOT_FOUND: 'The requested resource was not found.',
   VALIDATION_ERROR: 'Please check your input and try again.',
-  SERVER_ERROR: 'Server error. Please try again later.',
-  UNKNOWN_ERROR: 'An unexpected error occurred.',
+  SERVER_ERROR: 'An unexpected error occurred. Please try again later.',
+  TIMEOUT_ERROR: 'Request timed out. Please try again.',
+  FILE_TOO_LARGE: 'File size exceeds the maximum limit.',
+  INVALID_FILE_TYPE: 'File type is not supported.',
+  REQUIRED_FIELD: 'This field is required.',
+  INVALID_EMAIL: 'Please enter a valid email address.',
+  PASSWORD_TOO_SHORT: 'Password must be at least 8 characters long.',
+  PASSWORDS_DONT_MATCH: 'Passwords do not match.',
 };
 
-// Success messages
+// Success Messages
 export const SUCCESS_MESSAGES = {
-  LOGIN_SUCCESS: 'Successfully logged in.',
-  LOGOUT_SUCCESS: 'Successfully logged out.',
-  REGISTER_SUCCESS: 'Account created successfully.',
   PROFILE_UPDATED: 'Profile updated successfully.',
+  PASSWORD_CHANGED: 'Password changed successfully.',
+  APPLICATION_SUBMITTED: 'Application submitted successfully.',
+  APPLICATION_UPDATED: 'Application updated successfully.',
   CAMPAIGN_CREATED: 'Campaign created successfully.',
   CAMPAIGN_UPDATED: 'Campaign updated successfully.',
-  CAMPAIGN_DELETED: 'Campaign deleted successfully.',
-  INFLUENCER_ADDED: 'Influencer added to list successfully.',
-  INFLUENCER_REMOVED: 'Influencer removed from list successfully.',
-  LISTS_RESET: 'All lists have been reset.',
+  COLLABORATION_REQUESTED: 'Collaboration request sent successfully.',
+  PAYMENT_PROCESSED: 'Payment processed successfully.',
+  FILE_UPLOADED: 'File uploaded successfully.',
+  SETTINGS_SAVED: 'Settings saved successfully.',
 };
 
-// Validation rules
-export const VALIDATION = {
-  EMAIL: {
-    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    message: 'Please enter a valid email address.',
+// UI Constants
+export const UI = {
+  BREAKPOINTS: {
+    MOBILE: 768,
+    TABLET: 1024,
+    DESKTOP: 1200,
   },
-  PASSWORD: {
-    minLength: 8,
-    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-    message: 'Password must be at least 8 characters with uppercase, lowercase, number, and special character.',
+  ANIMATION_DURATION: {
+    FAST: 150,
+    NORMAL: 300,
+    SLOW: 500,
   },
-  PHONE: {
-    pattern: /^\+?[\d\s\-\(\)]+$/,
-    message: 'Please enter a valid phone number.',
+  Z_INDEX: {
+    DROPDOWN: 1000,
+    MODAL: 1050,
+    TOOLTIP: 1100,
+    TOAST: 1150,
   },
-  URL: {
-    pattern: /^https?:\/\/.+/,
-    message: 'Please enter a valid URL starting with http:// or https://',
+  COLORS: {
+    PRIMARY: '#667eea',
+    SECONDARY: '#764ba2',
+    SUCCESS: '#28a745',
+    WARNING: '#ffc107',
+    ERROR: '#dc3545',
+    INFO: '#17a2b8',
+    LIGHT: '#f8f9fa',
+    DARK: '#343a40',
   },
 };
 
-// Animation durations
-export const ANIMATION = {
-  FAST: 150,
-  NORMAL: 300,
-  SLOW: 500,
-  VERY_SLOW: 1000,
+// Local Storage Keys
+export const STORAGE_KEYS = {
+  THEME: 'infinder_theme',
+  LANGUAGE: 'infinder_language',
+  SIDEBAR_STATE: 'infinder_sidebar_state',
+  SEARCH_FILTERS: 'infinder_search_filters',
+  DASHBOARD_LAYOUT: 'infinder_dashboard_layout',
+  NOTIFICATIONS_SETTINGS: 'infinder_notifications_settings',
 };
 
-// Breakpoints
-export const BREAKPOINTS = {
-  XS: 480,
-  SM: 640,
-  MD: 768,
-  LG: 1024,
-  XL: 1280,
-  XXL: 1536,
+// Feature Flags
+export const FEATURE_FLAGS = {
+  ADVANCED_SEARCH: true,
+  ANALYTICS_DASHBOARD: true,
+  COLLABORATION_SYSTEM: true,
+  PAYMENT_INTEGRATION: false,
+  NOTIFICATION_SYSTEM: true,
+  MULTI_LANGUAGE: false,
+  DARK_MODE: true,
+  MOBILE_APP: false,
 };
 
-// Z-index layers
-export const Z_INDEX = {
-  DROPDOWN: 1000,
-  STICKY: 1020,
-  FIXED: 1030,
-  MODAL_BACKDROP: 1040,
-  MODAL: 1050,
-  POPOVER: 1060,
-  TOOLTIP: 1070,
-  TOAST: 1080,
-}; 
+// Analytics Events
+export const ANALYTICS_EVENTS = {
+  PAGE_VIEW: 'page_view',
+  BUTTON_CLICK: 'button_click',
+  FORM_SUBMIT: 'form_submit',
+  SEARCH: 'search',
+  FILTER_APPLY: 'filter_apply',
+  APPLICATION_SUBMIT: 'application_submit',
+  COLLABORATION_REQUEST: 'collaboration_request',
+  PAYMENT_COMPLETE: 'payment_complete',
+  ERROR_OCCURRED: 'error_occurred',
+};
+
+// Export all constants as a single object for easy access
+export const CONSTANTS = {
+  API_CONFIG,
+  ROUTES,
+  AUTH,
+  USER_ROLES,
+  CAMPAIGN_STATUS,
+  APPLICATION_STATUS,
+  COLLABORATION_STATUS,
+  PLATFORM_TYPES,
+  CONTENT_CATEGORIES,
+  AUDIENCE_DEMOGRAPHICS,
+  ENGAGEMENT_METRICS,
+  PAYMENT_METHODS,
+  NOTIFICATION_TYPES,
+  FILE_UPLOAD,
+  PAGINATION,
+  SEARCH_FILTERS,
+  ERROR_MESSAGES,
+  SUCCESS_MESSAGES,
+  UI,
+  STORAGE_KEYS,
+  FEATURE_FLAGS,
+  ANALYTICS_EVENTS,
+};
+
+export default CONSTANTS; 

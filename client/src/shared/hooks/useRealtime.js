@@ -2,7 +2,7 @@
  * Real-time React Hooks
  * 
  * Custom hooks for integrating real-time updates into React components.
- * Provides easy-to-use interfaces for WebSocket, Supabase, and SSE connections.
+ * Provides easy-to-use interfaces for WebSocket and SSE connections.
  */
 
 import { useEffect, useRef, useCallback, useState } from 'react';
@@ -67,7 +67,7 @@ export const useWebSocket = (channel, callback, options = {}) => {
 };
 
 /**
- * Hook for Supabase real-time table subscriptions
+ * Hook for real-time table subscriptions (to be implemented with new database)
  * @param {string} table - Table name to subscribe to
  * @param {string} event - Event type (INSERT, UPDATE, DELETE, *)
  * @param {Function} callback - Callback function for changes

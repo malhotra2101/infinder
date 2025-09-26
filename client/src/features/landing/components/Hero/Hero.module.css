@@ -40,7 +40,7 @@ body.menu-open .hero {
   position: fixed;
   top: 3rem;
   right: 4rem;
-  z-index: 1000;
+  z-index: 3;
   background: linear-gradient(90deg, #111 0%, #111 100%);
   background-size: 200% 100%;
   background-position: 100% 0;
@@ -80,7 +80,7 @@ body.menu-open .hero {
   color: #111;
   letter-spacing: 0.01em;
   line-height: 0.95;
-  z-index: 10000; /* Increased z-index to stay above 3D carousel */
+  z-index: 8; /* Increased z-index to stay above 3D carousel */
   font-family: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
   white-space: nowrap;
   pointer-events: none;
@@ -112,22 +112,21 @@ body.menu-open .title {
 
 
 
-/* Cube Container - positioned in the center */
+/* Cube Container - positioned like the original cube */
 .cubeContainer {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1000;
+  width: 300px;
+  height: 300px;
+  z-index: 7;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
-  background: #fff; /* Explicit white background to override any black background */
-  border-radius: 8px; /* Optional: adds rounded corners to the background */
-  padding: 20px; /* Optional: adds some padding around the cube */
 }
 
 /* Menu-responsive adjustments for cube container */
@@ -155,7 +154,7 @@ body.menu-open .cubeContainer {
   top: 50%;
   transform: translate(-50%, -50%);
   margin-left: -500px; /* Position much further to the left of the cube */
-  z-index: 1001;
+  z-index: 10;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -189,7 +188,7 @@ body.menu-open .reloadButtonContainer {
   top: 85%; /* Position even lower in the hero section */
   transform: translate(-50%, -50%);
   margin-left: -500px; /* Position much further to the left of the cube */
-  z-index: 1001;
+  z-index: 6;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -223,7 +222,7 @@ body.menu-open .getStartedButtonContainer {
   top: 85%; /* Same distance from top as get started button */
   transform: translate(-50%, -50%);
   margin-left: 425px; /* Position to align with view more button */
-  z-index: 1001;
+  z-index: 6;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;

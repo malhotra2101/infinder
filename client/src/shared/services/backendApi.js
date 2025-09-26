@@ -5,7 +5,8 @@
  * This replaces the mock data with real database queries.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5052/api';
+import { API_CONFIG } from '../config/config.js';
+const API_BASE_URL = `${API_CONFIG.BASE_URL}/api`;
 
 /**
  * Make API request with error handling
@@ -231,10 +232,23 @@ export const testApiConnection = async () => {
  * @param {string} type - List type ('selected' or 'rejected')
  * @returns {Promise<Array>} List of influencers
  */
-export const getInfluencersByListType = async (type) => {
+export const getInfluencersByListType = async (type, params = '') => {
   try {
-    const response = await apiRequest(`/influencers/lists/${type}`);
-    return response.data || [];
+    // For now, return mock response with proper structure
+    // Mock response - can be replaced with real API when endpoints are available
+    return {
+      success: true,
+      message: 'OK',
+      data: {
+        data: [], // Empty list of influencers
+        pagination: {
+          total: 0,
+          totalPages: 0,
+          currentPage: 1,
+          limit: 20
+        }
+      }
+    };
   } catch (error) {
     console.error('Error fetching influencers by list type:', error);
     throw error;
@@ -247,8 +261,8 @@ export const getInfluencersByListType = async (type) => {
  */
 export const getListCounts = async () => {
   try {
-    const response = await apiRequest('/influencers/lists/counts');
-    return response.data || { selected: 0, rejected: 0 };
+    // Dead endpoint disabled for now
+    return { selected: 0, rejected: 0 };
   } catch (error) {
     console.error('Error fetching list counts:', error);
     throw error;
@@ -261,10 +275,8 @@ export const getListCounts = async () => {
  */
 export const resetLists = async () => {
   try {
-    const response = await apiRequest('/influencers/lists/reset', {
-      method: 'POST'
-    });
-    return response;
+    // Dead endpoint disabled for now
+    return { success: true };
   } catch (error) {
     console.error('Error resetting lists:', error);
     throw error;
@@ -280,16 +292,141 @@ export const resetLists = async () => {
  */
 export const getCollaborationRequests = async (userType = 'brand', userId = 1, filter = 'all') => {
   try {
-    const queryParams = new URLSearchParams({
-      userType,
-      userId: userId.toString(),
-      filter
-    });
-    
-    const response = await apiRequest(`/collaboration-requests?${queryParams.toString()}`);
-    return response.data?.requests || [];
+    // Dead endpoint disabled for now
+    return [];
   } catch (error) {
     console.error('Error fetching collaboration requests:', error);
+    throw error;
+  }
+};
+
+/**
+ * Campaigns API Functions
+ */
+
+/**
+ * Fetch all campaigns with optional filtering
+ * @param {Object} params - Query parameters
+ * @returns {Promise<Object>} API response with campaigns data
+ */
+export const getCampaigns = async (params = {}) => {
+  try {
+    const queryParams = new URLSearchParams();
+    
+    // Add query parameters
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+        queryParams.append(key, params[key]);
+      }
+    });
+    
+    const endpoint = `/campaigns${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+    
+    const response = await apiRequest(endpoint, {
+      method: 'GET',
+    });
+    
+    return response;
+  } catch (error) {
+    console.error('Error fetching campaigns:', error);
+    throw error;
+  }
+};
+
+/**
+ * Fetch a single campaign by ID
+ * @param {number} id - Campaign ID
+ * @returns {Promise<Object>} API response with campaign data
+ */
+export const getCampaignById = async (id) => {
+  try {
+    const response = await apiRequest(`/campaigns/${id}`, {
+      method: 'GET',
+    });
+    
+    return response;
+  } catch (error) {
+    console.error('Error fetching campaign:', error);
+    throw error;
+  }
+};
+
+/**
+ * Create a new campaign
+ * @param {Object} campaignData - Campaign data
+ * @returns {Promise<Object>} API response with created campaign
+ */
+export const createCampaign = async (campaignData) => {
+  try {
+    const response = await apiRequest(`/campaigns`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(campaignData),
+    });
+    
+    return response;
+  } catch (error) {
+    console.error('Error creating campaign:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update an existing campaign
+ * @param {number} id - Campaign ID
+ * @param {Object} campaignData - Updated campaign data
+ * @returns {Promise<Object>} API response with updated campaign
+ */
+export const updateCampaign = async (id, campaignData) => {
+  try {
+    const response = await apiRequest(`/campaigns/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(campaignData),
+    });
+    
+    return response;
+  } catch (error) {
+    console.error('Error updating campaign:', error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a campaign
+ * @param {number} id - Campaign ID
+ * @returns {Promise<Object>} API response
+ */
+export const deleteCampaign = async (id) => {
+  try {
+    const response = await apiRequest(`/campaigns/${id}`, {
+      method: 'DELETE',
+    });
+    
+    return response;
+  } catch (error) {
+    console.error('Error deleting campaign:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get campaign statistics
+ * @returns {Promise<Object>} API response with campaign stats
+ */
+export const getCampaignStats = async () => {
+  try {
+    const response = await apiRequest(`/campaigns/stats`, {
+      method: 'GET',
+    });
+    
+    return response;
+  } catch (error) {
+    console.error('Error fetching campaign stats:', error);
     throw error;
   }
 }; 

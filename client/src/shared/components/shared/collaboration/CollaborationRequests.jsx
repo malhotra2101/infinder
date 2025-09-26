@@ -18,16 +18,8 @@ const CollaborationRequests = () => {
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:5052/api/collaboration-requests?userType=brand&userId=1&filter=${activeTab}`
-      );
-      const data = await response.json();
-      
-      if (data.success) {
-        setRequests(data.data.requests || []);
-      } else {
-        console.error('Failed to fetch requests:', data.message);
-      }
+      // Dead endpoints disabled: use empty data
+      setRequests([]);
     } catch (error) {
       console.error('Error fetching requests:', error);
     } finally {
@@ -37,14 +29,8 @@ const CollaborationRequests = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(
-        'http://localhost:5052/api/collaboration-requests/stats?userType=brand&userId=1'
-      );
-      const data = await response.json();
-      
-      if (data.success) {
-        setStats(data.data);
-      }
+      // Dead endpoints disabled: keep zeroed stats
+      setStats(prev => prev);
     } catch (error) {
       console.error('Error fetching stats:', error);
     }
@@ -52,34 +38,9 @@ const CollaborationRequests = () => {
 
   const updateRequestStatus = async (requestId, newStatus) => {
     try {
-      const response = await fetch(
-        `http://localhost:5052/api/collaboration-requests/${requestId}/status`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status: newStatus })
-        }
-      );
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        // Refresh requests and stats
-        fetchRequests();
-        fetchStats();
-        
-        if (window.showToast) {
-          window.showToast(
-            `Request ${newStatus} successfully`,
-            'success',
-            3000
-          );
-        }
-      } else {
-        throw new Error(data.message);
-      }
+      // Dead endpoints disabled
+      fetchRequests();
+      fetchStats();
     } catch (error) {
       console.error('Error updating request status:', error);
       if (window.showToast) {
@@ -98,30 +59,9 @@ const CollaborationRequests = () => {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5052/api/collaboration-requests/${requestId}`,
-        {
-          method: 'DELETE'
-        }
-      );
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        // Refresh requests and stats
-        fetchRequests();
-        fetchStats();
-        
-        if (window.showToast) {
-          window.showToast(
-            'Request deleted successfully',
-            'success',
-            3000
-          );
-        }
-      } else {
-        throw new Error(data.message);
-      }
+      // Dead endpoints disabled
+      fetchRequests();
+      fetchStats();
     } catch (error) {
       console.error('Error deleting request:', error);
       if (window.showToast) {

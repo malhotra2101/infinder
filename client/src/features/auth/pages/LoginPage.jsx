@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import MenuToggle from '../../landing/components/MenuToggle.jsx';
+import { useAuth } from '../components/AuthContext';
 import './AuthPages.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { login, isLoading: authLoading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -12,6 +13,7 @@ const LoginPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -25,19 +27,52 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setShowErrorPopup(false);
+
+    console.log('🚀 Login form submitted with data:', formData);
 
     try {
-      // Simulate login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes, accept any email/password
-      if (formData.email && formData.password) {
-        navigate('/');
-      } else {
+      // Validate required fields
+      if (!formData.email || !formData.password) {
+        console.log('❌ Validation failed: missing email or password');
         setError('Please enter both email and password');
+        setShowErrorPopup(true);
+        setLoading(false);
+        return;
+      }
+
+      console.log('✅ Form validation passed, attempting login...');
+
+      // Attempt login using AuthContext
+      const result = await login({
+        email: formData.email,
+        password: formData.password
+      });
+
+      console.log('📥 Login API response:', result);
+
+      if (result.success) {
+        console.log('✅ Login successful, navigating to dashboard');
+        // Show success message
+        if (window.showToast) {
+          window.showToast(
+            `Welcome back to ${result.user.brandName}!`,
+            'success',
+            3000
+          );
+        }
+        
+        // Navigate to dashboard
+        navigate('/dashboard');
+      } else {
+        console.log('❌ Login failed:', result.message);
+        setError(result.message || 'Login failed. Please try again.');
+        setShowErrorPopup(true);
       }
     } catch (err) {
-      setError('Login failed. Please try again.');
+      console.error('🚨 Login error:', err);
+      setError(err.message || 'Login failed. Please check your credentials and try again.');
+      setShowErrorPopup(true);
     } finally {
       setLoading(false);
     }
@@ -45,7 +80,6 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      <MenuToggle />
       
       {/* Animated Background */}
       <div className="login-background">
@@ -147,9 +181,9 @@ const LoginPage = () => {
               <button
                 type="submit"
                 className="submit-button"
-                disabled={loading}
+                disabled={loading || authLoading}
               >
-                {loading ? (
+                {(loading || authLoading) ? (
                   <>
                     <span className="spinner"></span>
                     Signing In...
@@ -169,10 +203,40 @@ const LoginPage = () => {
                     rememberMe: false
                   });
                 }}
-                disabled={loading}
+                disabled={loading || authLoading}
               >
                 Try Demo Login
               </button>
+              
+              <div className="demo-accounts">
+                <p className="demo-title">Demo Accounts:</p>
+                <div className="demo-list">
+                  <button
+                    type="button"
+                    className="demo-account-btn"
+                    onClick={() => setFormData({
+                      email: 'test@example.com',
+                      password: 'test123',
+                      rememberMe: false
+                    })}
+                    disabled={loading || authLoading}
+                  >
+                    Test Brand
+                  </button>
+                  <button
+                    type="button"
+                    className="demo-account-btn"
+                    onClick={() => setFormData({
+                      email: 'admin@test.com',
+                      password: 'admin123',
+                      rememberMe: false
+                    })}
+                    disabled={loading || authLoading}
+                  >
+                    Admin Brand
+                  </button>
+                </div>
+              </div>
             </form>
 
             <div className="form-divider">
@@ -190,6 +254,49 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Error Popup Modal */}
+      {showErrorPopup && (
+        <div className="error-popup-overlay" onClick={() => setShowErrorPopup(false)}>
+          <div className="error-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="error-popup-header">
+              <div className="error-popup-icon">⚠️</div>
+              <h3 className="error-popup-title">Login Failed</h3>
+              <button 
+                className="error-popup-close" 
+                onClick={() => setShowErrorPopup(false)}
+                aria-label="Close error popup"
+              >
+                ×
+              </button>
+            </div>
+            <div className="error-popup-content">
+              <p className="error-popup-message">{error}</p>
+              <div className="error-popup-actions">
+                <button 
+                  className="error-popup-btn error-popup-btn-primary"
+                  onClick={() => setShowErrorPopup(false)}
+                >
+                  Try Again
+                </button>
+                <button 
+                  className="error-popup-btn error-popup-btn-secondary"
+                  onClick={() => {
+                    setShowErrorPopup(false);
+                    setFormData({
+                      email: '',
+                      password: '',
+                      rememberMe: false
+                    });
+                  }}
+                >
+                  Clear Form
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

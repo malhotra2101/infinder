@@ -1,9 +1,6 @@
 export { default as Hero } from './Hero/Hero';
 export { default as Cube } from './Cube/Cube';
-export { default as ScrollRevealText } from './ScrollRevealText/ScrollRevealText';
-export { default as MenuToggle } from './MenuToggle';
-export { default as About } from './About';
-export { default as Contact } from './Contact';
 export { default as Services } from './Services';
 export { default as Showcase } from './Showcase';
-export { default as Footer } from './Footer'; 
+export { default as Footer } from './Footer';
+export { default as BrandCarousel } from './BrandCarousel/BrandCarousel'; 

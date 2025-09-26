@@ -5,43 +5,31 @@
  * It includes rules for React, hooks, and modern JavaScript features.
  */
 
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import js from '@eslint/js';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import reactHooks from 'eslint-plugin-react-hooks';
+import globals from 'globals';
 
-export default defineConfig([
-  // Global ignores - files/directories to skip linting
-  globalIgnores(['dist']),
-  
-  // Main configuration for JavaScript and JSX files
+export default [
+  js.configs.recommended,
   {
-    files: ['**/*.{js,jsx}'],
-    
-    // Extend recommended configurations
-    extends: [
-      js.configs.recommended, // Base JavaScript rules
-      reactHooks.configs['recommended-latest'], // React Hooks rules
-      reactRefresh.configs.vite, // Vite-specific React rules
-    ],
-    
-    // Language options for parsing
+    ignores: ['dist/**', 'node_modules/**'],
     languageOptions: {
-      ecmaVersion: 2020, // Use ES2020 features
-      globals: globals.browser, // Browser globals (window, document, etc.)
-      parserOptions: {
-        ecmaVersion: 'latest', // Latest ECMAScript features
-        ecmaFeatures: { jsx: true }, // Enable JSX parsing
-        sourceType: 'module', // Use ES modules
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
       },
     },
-    
-    // Custom rules
+    plugins: {
+      'react-refresh': reactRefresh,
+      'react-hooks': reactHooks,
+    },
     rules: {
-      // Allow unused variables that start with uppercase or underscore
-      // Useful for React components and constants
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
-])
+];

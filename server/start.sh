@@ -8,9 +8,9 @@ echo "🚀 Starting Infinder Server..."
 # Set default environment if not already set
 export NODE_ENV=${NODE_ENV:-development}
 
-# Kill any existing node processes on port 5050
-echo "🔄 Checking for existing processes on port 5050..."
-lsof -ti:5050 | xargs kill -9 2>/dev/null || true
+# Kill any existing node processes on port 5051
+echo "🔄 Checking for existing processes on port 5051..."
+lsof -ti:5051 | xargs kill -9 2>/dev/null || true
 
 # Wait a moment for port to be freed
 sleep 2
@@ -29,8 +29,8 @@ fi
 
 # Start the server
 echo "✅ Starting server with NODE_ENV=$NODE_ENV"
-echo "📊 Server will be available at: http://localhost:5050"
-echo "🔍 Health check: http://localhost:5050/api/ping"
+echo "📊 Server will be available at: http://localhost:5051"
+echo "🔍 Health check: http://localhost:5051/api/ping"
 echo ""
 
 # Start the server with proper error handling

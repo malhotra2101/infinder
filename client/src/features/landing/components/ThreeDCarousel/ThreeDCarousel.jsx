@@ -22,6 +22,8 @@ const ThreeDCarousel = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [timeline, setTimeline] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  // Save carousel transform to retain position when returning from preview
+  const savedCarouselStateRef = useRef(null);
 
   // Utility function to get carousel cell transforms
   const getCarouselCellTransforms = (count, radius) => {
@@ -70,8 +72,8 @@ const ThreeDCarousel = ({
       )
       .fromTo(
         cards,
-        { filter: 'brightness(250%)' },
-        { filter: 'brightness(80%)', ease: 'power3' },
+        { filter: 'brightness(100%)' },
+        { filter: 'brightness(100%)', ease: 'power3' },
         0
       )
       .fromTo(cards, { rotationZ: 10 }, { rotationZ: -10, ease: 'none' }, 0);
@@ -192,6 +194,22 @@ const ThreeDCarousel = ({
     if (isAnimating) return;
     setIsAnimating(true);
 
+    // Save current carousel transform state to restore later
+    if (carouselRef.current) {
+      savedCarouselStateRef.current = {
+        rotationX: Number(gsap.getProperty(carouselRef.current, 'rotationX')) || 0,
+        rotationY: Number(gsap.getProperty(carouselRef.current, 'rotationY')) || 0,
+        rotationZ: Number(gsap.getProperty(carouselRef.current, 'rotationZ')) || 0,
+        z: Number(gsap.getProperty(carouselRef.current, 'z')) || 0,
+        yPercent: Number(gsap.getProperty(carouselRef.current, 'yPercent')) || 0,
+      };
+    }
+
+    // Disable page scroll while preview is open
+    document.body.style.overflow = 'hidden';
+    // Pause scroll-based triggers to freeze scroll animations
+    ScrollTrigger.getAll().forEach(t => t.disable());
+
     const cards = carouselRef.current?.querySelectorAll('.card') || [];
     const imagesToShow = previewImages.length > 0 ? previewImages : images;
 
@@ -248,6 +266,11 @@ const ThreeDCarousel = ({
     if (isAnimating) return;
     setIsAnimating(true);
 
+    // Prevent any lingering animations on the title from interfering
+    if (titleRef.current) {
+      gsap.killTweensOf(titleRef.current);
+    }
+
     animateGridItemsOut(() => {
       setShowPreview(false);
       gsap.set(sceneRef.current, { autoAlpha: 1 });
@@ -264,36 +287,32 @@ const ThreeDCarousel = ({
         y: -20 
       });
       
-      // Animate carousel back in
-      gsap.timeline({
-        delay: 0.7,
-        defaults: { duration: 1.3, ease: 'expo' },
+      // Animate carousel back to its saved state (retain position)
+      const target = savedCarouselStateRef.current || { rotationY: -180, yPercent: 0, z: 0 };
+      const retTl = gsap.timeline({
+        delay: 0.5,
+        defaults: { duration: 0.9, ease: 'power2.out' },
         onComplete: () => {
           setIsAnimating(false);
         },
-      })
-      .fromTo(
-        carouselRef.current,
-        {
-          z: -550,
-          rotationX: 3,
-          rotationY: -720,
-          rotationZ: -3,
-          yPercent: 300,
-        },
-        {
-          rotationY: -180,
-          yPercent: 0,
-        },
-        0
-      )
-      .fromTo(cards, { autoAlpha: 0 }, { autoAlpha: 1 }, 0.3);
+      });
+      retTl.to(carouselRef.current, {
+        rotationX: target.rotationX ?? 0,
+        rotationY: target.rotationY ?? -180,
+        rotationZ: target.rotationZ ?? 0,
+        yPercent: target.yPercent ?? 0,
+        z: target.z ?? 0,
+      }, 0)
+      .fromTo(cards, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 0.2);
 
       // Separate timeline for title animation to ensure it's not overridden
       gsap.timeline({
-        delay: 0.9, // Start after carousel animation begins
+        delay: 0.8, // Start after carousel animation begins
         onComplete: () => {
-          console.log('Title animation completed');
+          if (titleRef.current) {
+            // Force final visible state just in case other tweens interfered
+            gsap.set(titleRef.current, { autoAlpha: 1, y: 0 });
+          }
         },
       })
       .fromTo(
@@ -321,6 +340,10 @@ const ThreeDCarousel = ({
           console.log('Title fallback applied');
         }
       }, 3000);
+
+      // Re-enable page scroll and scroll triggers after closing preview
+      document.body.style.overflow = '';
+      ScrollTrigger.getAll().forEach(t => t.enable());
     });
   };
 
@@ -348,8 +371,23 @@ const ThreeDCarousel = ({
         newTimeline.kill();
       }
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Safety: ensure scroll is re-enabled if component unmounts while preview was open
+      document.body.style.overflow = '';
     };
   }, [images, radius]);
+
+  // Lock/unlock page scroll based on preview state (extra safety in addition to open/close handlers)
+  useEffect(() => {
+    if (showPreview) {
+      document.body.style.overflow = 'hidden';
+      // Pause scroll triggers while preview is open
+      ScrollTrigger.getAll().forEach(t => t.disable());
+    } else {
+      document.body.style.overflow = '';
+      // Resume scroll triggers when preview closes
+      ScrollTrigger.getAll().forEach(t => t.enable());
+    }
+  }, [showPreview]);
 
   // Re-setup when images change
   useEffect(() => {
@@ -376,10 +414,10 @@ const ThreeDCarousel = ({
                 <div className="card__face card__face--front"></div>
                 <div className="card__face card__face--back"></div>
               </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
 
       {/* Preview Modal */}
       {showPreview && (
@@ -409,7 +447,7 @@ const ThreeDCarousel = ({
               </figure>
             ))}
           </div>
-        </div>
+    </div>
       )}
     </>
   );

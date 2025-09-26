@@ -6,11 +6,12 @@ import { Helmet } from 'react-helmet-async';
 import Sidebar from '../components/shared/sidebar/Sidebar.jsx';
 import SidebarToggle from '../components/shared/sidebar/SidebarToggle.jsx';
 import Navbar from '../components/shared/navbar/Navbar.jsx';
-import Dashboard from '../../brand/pages/Dashboard';
-import CampaignsPage from '../../brand/pages/CampaignsPage';
-import SearchPage from '../../brand/pages/SearchPage';
-import ContactPage from '../../brand/pages/ContactPage';
-import ProfilePage from '../../brand/pages/ProfilePage';
+import Dashboard from '../../features/brand-portal/pages/Dashboard';
+import CampaignsPage from '../../features/brand-portal/pages/CampaignsPage';
+import SearchPage from '../../features/brand-portal/pages/SearchPage';
+import ContactPage from '../../features/brand-portal/pages/ContactPage';
+import ProfilePage from '../../features/brand-portal/pages/ProfilePage';
+import EmailComposerPage from '../../features/email-marketing/pages/EmailComposerPage';
 import CollaborationRequests from '../components/shared/collaboration/CollaborationRequests.jsx';
 
 // Import styles
@@ -114,6 +115,9 @@ const BrandPageLayout = () => {
             
             {/* Search page */}
             <Route path="/search" element={<SearchPage sidebarOpen={sidebarOpen} />} />
+            
+            {/* Email Composer page */}
+            <Route path="/email-composer" element={<EmailComposerPage />} />
             
             {/* Collaboration page */}
             <Route path="/collaboration" element={<CollaborationRequests />} />

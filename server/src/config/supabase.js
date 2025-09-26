@@ -1,56 +1,21 @@
 const { createClient } = require('@supabase/supabase-js');
-const config = require('./environment');
 
-/**
- * Initialize Supabase client
- * @returns {Object} Supabase client instance
- */
-const initializeSupabase = () => {
-  try {
-    const supabase = createClient(
-      config.supabase.url,
-      config.supabase.anonKey,
-      {
-        auth: {
-          autoRefreshToken: true,
-          persistSession: false
-        }
-      }
-    );
+let cachedServiceClient = null;
 
-    if (config.nodeEnv === 'development') {
-      console.log('✅ Supabase client initialized successfully');
-    }
-
-    return supabase;
-  } catch (error) {
-    console.error('❌ Failed to initialize Supabase client:', error);
-    throw error;
+function getServiceSupabase() {
+  if (cachedServiceClient) return cachedServiceClient;
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  if (!url || !serviceKey) {
+    const details = `Supabase env missing: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY/ANON`;
+    throw new Error(details);
   }
-};
+  cachedServiceClient = createClient(url, serviceKey, {
+    auth: { autoRefreshToken: true, persistSession: false },
+  });
+  return cachedServiceClient;
+}
 
-/**
- * Get Supabase client with service role (for admin operations)
- * @returns {Object} Supabase client with service role
- */
-const getServiceSupabase = () => {
-  if (!config.supabase.serviceRoleKey) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for admin operations');
-  }
+module.exports = { getServiceSupabase };
 
-  return createClient(
-    config.supabase.url,
-    config.supabase.serviceRoleKey,
-    {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: false
-      }
-    }
-  );
-};
 
-module.exports = {
-  initializeSupabase,
-  getServiceSupabase
-}; 
