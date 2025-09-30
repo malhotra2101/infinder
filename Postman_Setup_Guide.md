@@ -19,7 +19,7 @@
 | `base_url` | `http://localhost:5051` | `http://localhost:5051` |
 | `jwt_token` | (leave empty) | (auto-filled) |
 | `brand_id` | `20` | `20` |
-| `campaign_id` | `23` | `23` |
+| `campaign_id` | `27` | `27` |
 | `influencer_id` | `1022` | `1022` |
 
 4. **Save** and **Select** this environment

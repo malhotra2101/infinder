@@ -23,7 +23,7 @@ const ReceivedRequests = ({ userId = 16 }) => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`http://localhost:5051/api/collaboration-requests?userType=influencer&userId=${userId}&filter=received`);
+      const response = await fetch(`http://16.171.200.185:5051/api/collaboration-requests?userType=influencer&userId=${userId}&filter=received`);
       const result = await response.json();
 
       if (result.success) {
@@ -41,7 +41,7 @@ const ReceivedRequests = ({ userId = 16 }) => {
 
   const handleAccept = async (requestId) => {
     try {
-      const response = await fetch(`http://localhost:5051/api/collaboration-requests/${requestId}/status`, {
+      const response = await fetch(`http://16.171.200.185:5051/api/collaboration-requests/${requestId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ const ReceivedRequests = ({ userId = 16 }) => {
 
   const handleReject = async (requestId) => {
     try {
-      const response = await fetch(`http://localhost:5051/api/collaboration-requests/${requestId}/status`, {
+      const response = await fetch(`http://16.171.200.185:5051/api/collaboration-requests/${requestId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

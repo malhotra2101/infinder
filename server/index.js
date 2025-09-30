@@ -21,19 +21,12 @@ const startServer = async (port = config.port) => {
   try {
     // Database connection will be configured for new database design
 
-    // Create Express application with WebSocket support
-    const { app, server, wss } = createApp();
+    // Create Express application
+    const { app } = createApp();
 
-    // Start HTTP server with WebSocket support
-    server.listen(port, () => {
-      if (config.nodeEnv === 'development') {
-        console.log(`🚀 Infinder Server running on port ${port}`);
-        console.log(`🔌 WebSocket server ready on ws://localhost:${port}/ws`);
-        console.log(`📡 SSE endpoint available at http://localhost:${port}/api/events`);
-        console.log(`📊 API Health Check: http://localhost:${port}/api/ping`);
-        console.log(`🌐 Environment: ${config.nodeEnv}`);
-        console.log(`📝 API Documentation: http://localhost:${port}/api/info`);
-      }
+    // Start HTTP server
+    app.listen(process.env.PORT || 5051, "0.0.0.0", () => {
+      console.log(`🚀 Server running on port ${process.env.PORT || 5051}`);
       
       // Start email queue manager
       emailQueueManager.start(60000); // Process every minute
@@ -48,9 +41,7 @@ const startServer = async (port = config.port) => {
  * Handle graceful shutdown
  */
 const handleGracefulShutdown = (signal) => {
-  if (config.nodeEnv === 'development') {
-    console.log(`🛑 ${signal} received, shutting down gracefully`);
-  }
+  console.log(`🛑 ${signal} received, shutting down gracefully`);
   
   // Stop email queue manager
   emailQueueManager.stop();

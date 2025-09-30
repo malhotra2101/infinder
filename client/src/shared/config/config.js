@@ -126,7 +126,7 @@ export const PAGE_CONFIG = {
 
 // API configuration
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5051',
+  BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://16.171.200.185:5051',
   // Force refresh to clear cache
   CACHE_BUST: Date.now()
 };

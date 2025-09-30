@@ -23,7 +23,7 @@ const SentRequests = ({ userId = 16 }) => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`http://localhost:5051/api/collaboration-requests?userType=influencer&userId=${userId}&filter=sent`);
+      const response = await fetch(`http://16.171.200.185:5051/api/collaboration-requests?userType=influencer&userId=${userId}&filter=sent`);
       const result = await response.json();
 
       if (result.success) {
@@ -41,7 +41,7 @@ const SentRequests = ({ userId = 16 }) => {
 
   const handleWithdraw = async (requestId) => {
     try {
-      const response = await fetch(`http://localhost:5051/api/collaboration-requests/${requestId}`, {
+      const response = await fetch(`http://16.171.200.185:5051/api/collaboration-requests/${requestId}`, {
         method: 'DELETE'
       });
 

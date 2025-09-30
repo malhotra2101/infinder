@@ -34,7 +34,7 @@ const InfluencerSelectedCampaignsPage = ({
       // Use authenticated user ID or fallback to 16 for development
       const influencerId = user?.id || 16;
       // Fetch campaigns from influencer_lists table for this specific influencer
-      const response = await fetch(`http://localhost:5051/api/influencers/${influencerId}/campaigns`);
+      const response = await fetch(`http://16.171.200.185:5051/api/influencers/${influencerId}/campaigns`);
       const result = await response.json();
 
       if (result.success) {
